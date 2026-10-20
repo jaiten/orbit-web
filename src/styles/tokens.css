@@ -1,0 +1,69 @@
+/*
+ * Design tokens: the single source for colour, spacing, radii and type.
+ * Values come from Orbit's shared/design-tokens.json. Light is the default;
+ * dark follows the system unless the visitor picks a theme (data-theme).
+ */
+:root {
+  /* Surfaces and text (light) */
+  --canvas: #f5f5f7;
+  --surface: #ffffff;
+  --ink: #1d1d1f;
+  --muted: #6d6d73;
+  --line: #e4e4e8;
+
+  /* Coral. Fill for ticks and progress, text-safe variant for words,
+     button fill is the text-safe variant in light (white on #E87359 is only 3:1). */
+  --accent: #e87359;
+  --accent-text: #b74f38;
+  --btn: #b74f38;
+  --on-btn: #ffffff;
+
+  /* Habit palette */
+  --sage: #6e8c78;
+  --lavender: #8c85bf;
+  --honey: #d19e4d;
+  --clay: #d97a66;
+
+  --glass: rgb(255 255 255 / 0.72);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px -12px rgb(0 0 0 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.06), 0 24px 48px -16px rgb(0 0 0 / 0.22);
+
+  /* Shape */
+  --radius-card: 18px;
+  --radius-row: 12px;
+  --radius-chip: 999px;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas: #141416;
+    --surface: #1f1f21;
+    --ink: #f5f5f7;
+    --muted: #a6a6ad;
+    --line: #323236;
+    --accent-text: #e87359;
+    --btn: #e87359;
+    --on-btn: #141416;
+    --glass: rgb(31 31 33 / 0.72);
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -12px rgb(0 0 0 / 0.6);
+    --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 48px -16px rgb(0 0 0 / 0.8);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --canvas: #141416;
+  --surface: #1f1f21;
+  --ink: #f5f5f7;
+  --muted: #a6a6ad;
+  --line: #323236;
+  --accent-text: #e87359;
+  --btn: #e87359;
+  --on-btn: #141416;
+  --glass: rgb(31 31 33 / 0.72);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -12px rgb(0 0 0 / 0.6);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 48px -16px rgb(0 0 0 / 0.8);
+  color-scheme: dark;
+}
