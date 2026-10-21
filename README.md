@@ -29,7 +29,7 @@ Set before building: `NEXT_PUBLIC_TESTFLIGHT_URL` (the beta link; defaults to a 
 ## Deploy
 **Vercel:** import the repo. Framework: Next.js. It detects the static export; add the env vars above. Done.
 
-**GitHub Pages:** Settings → Pages → Source: GitHub Actions. Optionally add a repository variable `TESTFLIGHT_URL`. Push to `main`; `.github/workflows/pages.yml` builds with the right base path and publishes. For a custom domain or a `<user>.github.io` repo, drop the base path line in the workflow.
+**GitHub Pages (optional, the workflow is manual-only):** Settings → Pages → Source: GitHub Actions, then run the "Deploy to GitHub Pages" workflow from the Actions tab. Optionally add a repository variable `TESTFLIGHT_URL`. Push to `main`; `.github/workflows/pages.yml` builds with the right base path and publishes. For a custom domain or a `<user>.github.io` repo, drop the base path line in the workflow.
 
 ## Notes
 - Motion respects `prefers-reduced-motion`: movement becomes fades, videos don't autoplay, the Today section is not pinned.
