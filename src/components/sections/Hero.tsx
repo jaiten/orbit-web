@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { m, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { Monitor, Smartphone } from "lucide-react";
-import { OrbitMark } from "@/components/brand/OrbitMark";
+import { HeroMark } from "./HeroMark";
 import { PhoneFrame } from "@/components/devices/PhoneFrame";
 import { WindowFrame } from "@/components/devices/WindowFrame";
 import { TodayPhone } from "@/components/devices/TodayPhone";
@@ -54,9 +54,7 @@ export function Hero() {
 
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden px-6 pb-20 pt-24 text-center sm:pt-28" onPointerMove={onMove} onPointerLeave={onLeave}>
-      <m.div className="mx-auto size-24 sm:size-28" initial={{ scale: 0.85 }} animate={{ scale: 1 }} transition={spring.soft}>
-        <OrbitMark className="size-full" />
-      </m.div>
+      <HeroMark />
       <h1 id="hero-title" className="display mx-auto mt-6 max-w-4xl text-[clamp(44px,8.4vw,80px)]">
         A little space for what matters.
       </h1>
