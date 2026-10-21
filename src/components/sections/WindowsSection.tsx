@@ -100,7 +100,13 @@ export function WindowsSection() {
   }, [inView, doQuickAdd, goTo, doSearch]);
 
   useEffect(() => {
-    setCanLock(typeof document.documentElement.requestFullscreen === "function" && "keyboard" in navigator && "lock" in (navigator as Navigator & { keyboard: { lock?: unknown } }).keyboard);
+    // Some browsers (Brave with shields up, older Safari) hide or stub these APIs, so check defensively.
+    try {
+      const kb = (navigator as Navigator & { keyboard?: { lock?: unknown } }).keyboard;
+      setCanLock(typeof document.documentElement.requestFullscreen === "function" && typeof kb?.lock === "function");
+    } catch {
+      setCanLock(false);
+    }
     const onFs = () => {
       const on = document.fullscreenElement === stage.current;
       setLocked(on);
@@ -115,7 +121,7 @@ export function WindowsSection() {
   const captureKeys = async () => {
     try {
       await stage.current?.requestFullscreen();
-      await (navigator as Navigator & { keyboard: { lock: () => Promise<void> } }).keyboard.lock();
+      await (navigator as Navigator & { keyboard?: { lock?: () => Promise<void> } }).keyboard?.lock?.();
     } catch {}
   };
 

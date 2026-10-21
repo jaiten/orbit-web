@@ -1,5 +1,19 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { Component, useEffect, useRef, useState } from "react";
+
+/** If one section throws in some unusual browser, the rest of the page keeps working. */
+class Contain extends Component<{ children: React.ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(error: unknown) {
+    console.error("Orbit section failed to start", error);
+  }
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
 
 /**
  * Keeps a section's server-rendered HTML as is and only brings it to life (hydrates it) once it is
@@ -33,6 +47,10 @@ export function LazyIsland({ children, rootMargin = "1500px 0px" }: { children: 
   }, [live, rootMargin]);
 
   // On the server, and once live, render the real thing. Before that, React is told the (already present) HTML is correct.
-  if (typeof window === "undefined" || live) return <div ref={ref}>{children}</div>;
+  if (typeof window === "undefined" || live) return (
+      <div ref={ref}>
+        <Contain>{children}</Contain>
+      </div>
+    );
   return <div ref={ref} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: "" }} />;
 }
