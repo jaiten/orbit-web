@@ -1,6 +1,6 @@
 "use client";
 import { BentoCard, BentoGrid } from "@/components/kokonut/BentoGrid";
-import { ChecklistWidget, GridWidget, LockScreen, ProgressWidget } from "@/components/widgets/Widgets";
+import { ChecklistWidget, GridWidget, LockScreen, PlanProvider, ProgressWidget } from "@/components/widgets/Widgets";
 import { Reveal, RevealGroup, reveal } from "@/components/ui/Reveal";
 import { m } from "motion/react";
 
@@ -30,6 +30,7 @@ export function WidgetsSection() {
         <p className="lead mt-5">The Today widget comes in three styles: Progress, Checklist and Grid. Tick items off without opening the app, or check the boxes at a glance. Lock Screen widgets too.</p>
       </Reveal>
 
+      <PlanProvider>
       <div className="mt-14 grid items-start gap-10 xl:grid-cols-[minmax(0,760px)_1fr] xl:gap-14">
         <m.div variants={{ hidden: {}, show: {} }} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.1 }}>
           <BentoGrid>
@@ -49,6 +50,7 @@ export function WidgetsSection() {
           </m.div>
         </RevealGroup>
       </div>
+      </PlanProvider>
     </section>
   );
 }

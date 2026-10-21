@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { m } from "motion/react";
 import { Tick } from "@/components/ui/Tick";
 import { habits } from "@/lib/sample-data";
@@ -9,10 +9,34 @@ export type Size = "s" | "m" | "l";
 const Label = ({ children }: { children: React.ReactNode }) => <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">{children}</div>;
 const track = { background: "color-mix(in srgb, var(--ink) 8%, transparent)" };
 
-/** Progress: a count and a bar (or ring). Hovering moves one more item to done. */
-export function ProgressWidget({ size, active }: { size: Size; active: boolean }) {
-  const done = active ? 3 : 2;
-  const total = 5;
+const PLAN = ["Morning walk", "Focus on one thing", "Call someone you miss", "Send the invoice", "Plan tomorrow"];
+type Plan = { done: Set<number>; toggle: (i: number) => void };
+const PlanContext = createContext<Plan | null>(null);
+
+/** One shared plan for every Progress widget and the Lock Screen: tick an item in the large tile and they all follow. */
+export function PlanProvider({ children }: { children: React.ReactNode }) {
+  const [done, setDone] = useState<Set<number>>(new Set([0, 3]));
+  const toggle = (i: number) =>
+    setDone((d) => {
+      const n = new Set(d);
+      if (n.has(i)) n.delete(i);
+      else n.add(i);
+      return n;
+    });
+  return <PlanContext.Provider value={{ done, toggle }}>{children}</PlanContext.Provider>;
+}
+const usePlan = () => {
+  const ctx = useContext(PlanContext);
+  if (!ctx) throw new Error("PlanProvider missing");
+  return ctx;
+};
+const nextUp = (done: Set<number>) => PLAN.find((_, i) => !done.has(i));
+
+/** Progress: a count and a bar (or ring). The large tile is a checklist you can tick. */
+export function ProgressWidget({ size }: { size: Size; active?: boolean }) {
+  const { done: set, toggle } = usePlan();
+  const done = set.size;
+  const total = PLAN.length;
   const bar = (
     <div className="h-[7px] overflow-hidden rounded-full" style={track}>
       <m.div className="h-full origin-left rounded-full bg-accent" initial={false} animate={{ scaleX: done / total }} transition={spring.soft} />
@@ -35,14 +59,19 @@ export function ProgressWidget({ size, active }: { size: Size; active: boolean }
   return (
     <div className="flex h-full flex-col p-5">
       <Label>Your plan</Label>
-      <div className="mt-1 text-[clamp(22px,3.2cqw,30px)] font-semibold tracking-[-0.03em]">{done} of {total} done</div>
+      <div className="mt-1 text-[clamp(22px,3.2cqw,30px)] font-semibold tracking-[-0.03em]" aria-live="polite">{done} of {total} done</div>
       <div className="mt-3">{bar}</div>
       {size === "m" ? (
-        <div className="mt-auto text-[14px] text-muted">Next · <span className="text-ink">Focus on one thing</span> · 10:00 AM</div>
+        <div className="mt-auto text-[14px] text-muted">{nextUp(set) ? <>Next · <span className="text-ink">{nextUp(set)}</span></> : "All done for today"}</div>
       ) : (
-        <ul className="mt-5 space-y-2.5 text-[15px]">
-          {["Morning walk", "Focus on one thing", "Call someone you miss", "Send the invoice"].map((t, i) => (
-            <li key={t} className="flex items-center gap-3"><Tick done={i < done - 1} size={22} />{t}</li>
+        <ul className="mt-3 flex flex-1 flex-col justify-around text-[15px]">
+          {PLAN.map((t, i) => (
+            <li key={t}>
+              <button type="button" role="checkbox" aria-checked={set.has(i)} onClick={() => toggle(i)} className="flex w-full items-center gap-3 rounded-[10px] py-1 text-left transition-colors hover:bg-ink/[0.04] active:scale-[0.99]">
+                <Tick done={set.has(i)} size={22} />
+                <span className={set.has(i) ? "text-muted line-through" : ""}>{t}</span>
+              </button>
+            </li>
           ))}
         </ul>
       )}
@@ -124,7 +153,9 @@ export function GridWidget({ size, active }: { size: Size; active: boolean }) {
 
 /** Lock Screen: inline, circular and rectangular widgets over a dark wallpaper. Colours here are fixed, like a real lock screen. */
 export function LockScreen({ active }: { active: boolean }) {
-  const done = active ? 3 : 2;
+  const { done: set } = usePlan();
+  const done = set.size;
+  const next = nextUp(set);
   return (
     <div className="relative flex h-full flex-col items-center overflow-hidden p-6 text-white" style={{ background: "radial-gradient(120% 80% at 20% 0%, #5a3a4a 0%, #2b2a3d 45%, #151521 100%)" }}>
       <div className="text-[13px] font-medium text-white/80">Tuesday 20 October</div>
@@ -143,8 +174,7 @@ export function LockScreen({ active }: { active: boolean }) {
         </div>
         <div className="min-w-0 rounded-[16px] bg-white/15 px-2.5 py-2">
           <div className="text-[11px] font-semibold uppercase tracking-wide text-white/70">Next</div>
-          <div className="text-[13px] font-medium leading-tight">Focus on one thing</div>
-          <div className="text-[12px] text-white/70">10:00 AM</div>
+          <div className="text-[13px] font-medium leading-tight">{next ?? "All done"}</div>
         </div>
         <div className="relative size-[50px] rounded-full bg-white/15">
           <svg viewBox="0 0 100 100" className="size-full -rotate-90" aria-hidden>

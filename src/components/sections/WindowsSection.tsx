@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { links } from "@/lib/links";
 import { screenshots } from "@/lib/media";
 
+const PAGES_LABEL: Record<PageId, string> = { today: "Today", calendar: "Calendar", lists: "Lists", habits: "Habits", settings: "Settings" };
 const PAGE_IDS: PageId[] = ["today", "calendar", "lists", "habits", "settings"];
 const wait = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
 const norm = (k: string) => (k === "Control" ? "ctrl" : k === " " ? "space" : k.toLowerCase());
@@ -29,12 +30,14 @@ export function WindowsSection() {
   const [pressed, setPressed] = useState<Set<string>>(new Set());
   const [pulse, setPulse] = useState(0);
   const run = useRef(0);
+  // What the window is doing right now, shown beside the keys so it is visible even when the window is scrolled out of view.
+  const status = quickAdd !== null ? `Quick add: “${quickAdd}”` : search !== null ? `Search: “${search}”` : `Page: ${PAGES_LABEL[page]}`;
 
-  const typeInto = useCallback(async (text: string, set: (v: string | null) => void, hold: number, id: number) => {
+  const typeInto = useCallback(async (text: string, set: (v: string | null) => void, hold: number, id: number, pace = 80) => {
     for (let i = 1; i <= text.length; i++) {
       if (run.current !== id) return;
       set(text.slice(0, i));
-      await wait(55);
+      await wait(pace);
     }
     await wait(hold);
     if (run.current === id) set(null);
@@ -44,14 +47,14 @@ export function WindowsSection() {
     const id = ++run.current;
     setSearch(null);
     setQuickAdd("");
-    void typeInto("gym tomorrow 6pm", setQuickAdd, 1800, id);
+    void typeInto("gym tomorrow 6pm", setQuickAdd, 3000, id, 100);
   }, [typeInto]);
   const doSearch = useCallback(() => {
     const id = ++run.current;
     setQuickAdd(null);
     setPage("lists");
     setSearch("");
-    void typeInto("walk", setSearch, 1600, id);
+    void typeInto("walk", setSearch, 4000, id, 320);
   }, [typeInto]);
   const goTo = useCallback((i: number) => {
     run.current++;
@@ -66,8 +69,14 @@ export function WindowsSection() {
     const down = (e: KeyboardEvent) => {
       const k = norm(e.key);
       setPressed((p) => new Set(p).add(k));
-      if (e.target instanceof HTMLElement && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.isContentEditable)) return;
-      if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+      if (!(e.ctrlKey || e.metaKey) || e.altKey) {
+        // Alt+N: a stand-in for Ctrl+N, which browsers never hand to a page.
+        if (e.altKey && !e.ctrlKey && !e.metaKey && k === "n") {
+          doQuickAdd();
+          e.preventDefault();
+        }
+        return;
+      }
       let handled = true;
       if (e.shiftKey && k === " ") doQuickAdd();
       else if (k === "n") doQuickAdd();
@@ -75,8 +84,9 @@ export function WindowsSection() {
       else if (k === "f") doSearch();
       else if (k === "/") setPulse((n) => n + 1);
       else handled = false;
-      // Stops the browser's own Ctrl+F and tab switching. Ctrl+N is reserved by browsers outside fullscreen key capture.
-      if (handled && armed.current) e.preventDefault();
+      // Keep the browser from acting on the same keys (find, tab switching). Ctrl+F is only taken while the
+      // pointer or focus is on the demo, so find-in-page still works elsewhere. Ctrl+N is reserved by browsers.
+      if (handled && (armed.current || k !== "f")) e.preventDefault();
     };
     const up = (e: KeyboardEvent) => {
       const k = norm(e.key);
@@ -172,14 +182,25 @@ export function WindowsSection() {
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="text-[19px] font-semibold tracking-[-0.02em]">Try the keys</h3>
             <p className="text-[14px] text-muted">
-              {locked ? "Keys captured. Press Esc to leave." : "Point at the window and press the keys, or click a pair."}
-              {canLock && !locked && (
+              {locked ? "Keys captured. Press Esc to leave." : "Press the keys while this section is on screen, or click a pair."}{" "}
+              {!locked && (
                 <>
-                  {" "}Ctrl+N belongs to your browser,{" "}
-                  <button type="button" onClick={captureKeys} className="rounded font-medium text-accent-text underline underline-offset-2">capture keys</button> to use it.
+                  Browsers keep Ctrl+N for themselves, so <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Alt+N</kbd> works here too
+                  {canLock && (
+                    <>
+                      , or <button type="button" onClick={captureKeys} className="rounded font-medium text-accent-text underline underline-offset-2">capture keys</button> for the real thing
+                    </>
+                  )}
+                  .
                 </>
               )}
             </p>
+          </div>
+          <div className="mt-5 flex items-center gap-3 rounded-[12px] bg-canvas px-4 py-3 text-[14px] ring-1 ring-line" aria-live="polite">
+            <span aria-hidden className="size-2 shrink-0 rounded-full bg-accent" />
+            <span className="text-muted">Window</span>
+            <span className="min-w-0 truncate font-medium">{status}</span>
+            {search !== null && <i aria-hidden className="caret -ml-2 inline-block h-4 w-px bg-ink" />}
           </div>
           <div className="mt-6 grid gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
             {groups.map((g) => (
