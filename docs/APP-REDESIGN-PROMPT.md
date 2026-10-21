@@ -1,38 +1,38 @@
-# Prompt: bring the Orbit apps up to the website's level
+# Prompt: make the Orbit apps look and feel like the website
 
-Paste everything below the line into Claude Code, opened in the `Orbit` repo. Run it as two or three sessions (tokens and shared components first, then Windows, then iOS) so each is reviewable.
+Works in Claude Code (open in the `Orbit` repo), ChatGPT/Codex with repo access, or any chat model. If the model can't browse, attach 4–6 screenshots of the website (hero, Today, Habits, Widgets, Windows) and the files listed under "Read these first". Replace `SITE_URL` with your Vercel URL.
 
 ---
 
-You are redesigning the visuals and motion of Orbit, a local-first planner for iPhone (SwiftUI, `ios/`) and Windows (Electron, HTML/CSS/JS in `windows/ui/`). The marketing site at https://github.com/jaiten/orbit-web (`src/components/devices/*`, `src/components/widgets/*`, `src/components/bklit/*`, `src/lib/motion.ts`, `src/styles/tokens.css`) shows the target look. Read those files first and match them closely: the site's live "Today" screens are the reference for both apps.
+I have a planner called Orbit: an iPhone app (SwiftUI, `ios/`) and a Windows app (Electron, HTML/CSS/JS in `windows/ui/`) in this repo. My marketing website shows the UI I actually want the apps to have. The apps currently look less clean than the website's version of them. Your job: **make the real apps look and feel like the website's app screens.** Visual and motion pass only; do not change behaviour, data, sync, models or the meaning of any copy.
 
-**Do not change behaviour, data, sync, models or copy meaning. This is a visual and motion pass only.** Keep `shared/design-tokens.json` as the single source of truth and regenerate with `npm run generate`/`npm run tokens`; keep the Windows token drift test passing. Keep existing accessibility: Dynamic Type, VoiceOver labels, keyboard focus, reduced motion.
+## Step 1: study the reference (do this before writing code)
+1. Open `SITE_URL` in a browser and scroll the whole page. Pay attention to the live app screens: the iPhone and Windows Today screens in the hero, the pinned "A day you can actually finish" section (tasks slide in, overdue choices, tick animation), the Quick add chip, the Habits history grids, the widget tiles, and the Windows window with its sidebar. If you can't browse, use the attached screenshots.
+2. Read the source of those screens in https://github.com/jaiten/orbit-web (or the attached files): `src/components/devices/TodayPhone.tsx`, `DesktopApp.tsx`, `screen-parts.tsx`, `src/components/widgets/Widgets.tsx`, `src/components/bklit/*`, `src/components/ui/Tick.tsx`, `src/lib/motion.ts`, `src/styles/tokens.css`.
+3. Then read the apps: `shared/design-tokens.json`, `windows/ui/styles.css` + `windows/ui/pages/*.js`, `ios/Shared/Design.swift`, `ios/App/TodayView.swift`, `TodayRows.swift`, `HabitsView.swift`, `QuickCapture.swift`, `ios/Widgets/`.
+4. Write a short gap list first: for each screen, what differs from the website (spacing, type, row styling, colour use, motion). Show it to me, then implement.
 
-## The look: quiet, spacious, precise
-- Canvas `#F5F5F7` / `#141416`, cards on `#FFFFFF` / `#1F1F21`. Cards 18px radius, rows 12px, chips pill. **No heavy shadows**: separation comes from a 1px line (`#E4E4E8` / `#323236`) and a faint `0 1px 2px` shadow only on floating things.
-- Generous whitespace on the 8px scale. Screen padding 20px. Sections separated by 24–32px, never by dividers and boxes together.
-- Type: SF Pro (iOS) / Segoe UI Variable (Windows). Large title 34–36 bold with tight tracking (-0.03em), small uppercase eyebrow labels (11–12px, +0.1em tracking, muted) above titles and cards, body 15–17, secondary text muted. Use tabular numerals for counts and times.
-- Coral `#E87359` for ticks, progress, selection and the single primary action. Coral text uses `#B74F38` in light mode. Habit colours (sage, lavender, honey, clay) appear only as small dots, grid boxes and bars, never as large fills.
-- Copy stays calm: "Your plan", "2 of 5 done", "Saved locally". No exclamation marks, no scores, no guilt.
+## Step 2: the design rules the website follows (match them)
+- **Surfaces:** canvas `#F5F5F7` / `#141416`; cards and rows on `#FFFFFF` / `#1F1F21`; 1px lines `#E4E4E8` / `#323236`. Separation comes from the 1px line, not heavy shadows. Cards 18px radius, rows 12px, chips pill. 8px spacing scale; 20px screen padding; 24–32px between sections; no divider lines plus boxes together.
+- **Type:** SF Pro (iOS) and Segoe UI Variable (Windows). Large title 34–36 bold, tight tracking (-0.03em). Tiny uppercase eyebrow labels (11–12px, +0.1em tracking, muted) above cards and sections ("YOUR PLAN", "TIME BLOCKS"). Body 15–17. Secondary text muted. Tabular numerals for counts and times.
+- **Colour:** coral `#E87359` only for ticks, progress, selection and the one primary action. Coral text in light mode is `#B74F38`. Habit colours (sage `#6E8C78`, lavender `#8C85BF`, honey `#D19E4D`, clay `#D97A66`) appear only as 10px dots, grid boxes and bars, never large fills. Dark mode follows the system.
+- **Copy:** calm and short: "Your plan", "2 of 5 done", "Saved locally", "Miss a day? Nothing breaks." No exclamation marks, no scores, no streaks, no guilt.
 
-## Components to build (same on both apps)
-1. **Plan card**: eyebrow "YOUR PLAN", "2 of 5 done" at 22px medium, 6px rounded progress bar in coral on a 8% ink track. The bar fills with a spring.
-2. **Task row**: 46–56px tall, 12px radius, surface background with 1px line. Round 24px checkbox with a 2px coral-at-45% ring. On completion: the ring fills coral, a white tick **draws itself** (stroke, ~280ms), the circle does a slight 1.0→1.14→1.0 scale, the title turns muted with strikethrough, and the row settles below the open ones with a spring.
-3. **Overdue row**: the same row with three pill buttons under the title, "Today", "Later", "Someday", tinted coral at 12%, text-coloured `#B74F38`. Choosing one springs the row away or into place.
-4. **Habit row**: 10px colour dot, title, muted "4 of 6". **Habit history**: "5 of the last 7 days" as 7 rounded segments with M T W T F S S labels beneath, plus a GitHub-style grid (12 weeks × 7 rows, 3px gaps, 3px-radius boxes, level shown by opacity 0.3–1.0 of the habit colour on a 7% ink track). A habits History page lists every habit with its week bar and its grid.
-5. **Quick add**: one rounded field, "+" glyph, placeholder "gym tomorrow 6pm", and below it a pill chip (coral 12% fill) that shows "Task · Tomorrow · 6:00 PM". Chip segments animate in and out as you type and the chip resizes with a spring.
-6. **Widgets (iOS)**: Progress (ring for small, bar for medium/large), Checklist (tick items off from the Home Screen), Grid (GitHub-style, cell size driven by available height so boxes stay square). Same typography and eyebrow labels as the app. Lock Screen: inline, circular gauge, rectangular.
-7. **Windows shell**: 216px sidebar slightly darker than canvas, active item as a white pill with a 1px line and a coral icon, `Ctrl+1…5` shown right-aligned in a small monospace, search field at the top with `Ctrl+F`, "Saved locally" at the bottom. Two-column Today (tasks left, plan card + habits + 12-week grid right). Quick add opens as a centred 480px card over a dimmed, lightly blurred window.
-8. **iOS shell**: 5-tab bar (Today, Calendar, Lists, Habits, Settings) with 24px line icons, active tab coral, translucent bar with blur.
+## Step 3: the components (build once per platform, then reuse everywhere)
+1. **Plan card:** eyebrow "YOUR PLAN", "2 of 5 done" at 22px medium, 6px progress bar (coral on an 8%-ink track) that fills with a spring.
+2. **Task row:** 46–56px tall, 12px radius, surface + 1px line. 24px round checkbox with a 2px coral-at-45% ring. On complete: ring fills coral, a white tick **draws itself** (stroke, ~280ms), the circle scales 1 → 1.14 → 1, the title goes muted with a strikethrough, and the row settles below the open ones with a spring.
+3. **Overdue row:** same row with three pill buttons under the title: Today, Later, Someday (coral 12% fill, `#B74F38` text). Choosing one springs the row into place or away.
+4. **Habit row:** 10px colour dot, title, muted "4 of 6". **History:** "5 of the last 7 days" as 7 rounded segments with M T W T F S S labels, plus a GitHub-style grid (12 weeks × 7 rows, 3px gaps, 3px-radius boxes, opacity 0.3–1 of the habit colour on a 7% ink track). One History page shows every habit this way.
+5. **Quick add:** one rounded field with "+" and placeholder "gym tomorrow 6pm"; below it a pill chip (coral 12%) such as "Task · Tomorrow · 6:00 PM" whose segments animate in and out as you type and whose width springs.
+6. **Windows shell:** 216px sidebar slightly darker than canvas; active item is a white pill with a 1px line and a coral icon (it slides between items); `Ctrl+1…5` shown right-aligned in small monospace; search field on top with `Ctrl+F`; "Saved locally" at the bottom. Two-column Today: tasks left; plan card, habits and a 12-week grid right. Quick add opens as a centred 480px card over a dimmed, slightly blurred window.
+7. **iPhone shell:** five tabs (Today, Calendar, Lists, Habits, Settings), 24px line icons, active tab coral, translucent bar with blur. **Widgets:** Progress (ring small, bar medium/large), Checklist (tick from the Home Screen), Grid (boxes square, sized by available height); same type and eyebrow labels as the app.
 
-## Motion
-Springs, never linear. UI: stiffness ~300, damping ~30 (SwiftUI: `.spring(response: 0.35, dampingFraction: 0.86)`; Windows: use the Web Animations API or CSS `linear()` approximations of the same spring). Large elements softer (response ~0.55). Durations 200–600ms. Animate only opacity and transform. List rows enter staggered 50ms apart, sliding 16–24px from the left while fading in. Hover/press: rows and cards lift or scale 0.97–0.985 on press. Respect Reduce Motion (iOS) and `prefers-reduced-motion` (Windows): replace movement with simple fades and skip staggers. Nothing loops or runs without a user action.
+## Step 4: motion
+Springs, never linear: stiffness ~300, damping ~30 for UI; softer (response ~0.55) for large elements. SwiftUI: `.spring(response: 0.35, dampingFraction: 0.86)`. Windows: Web Animations API or CSS `linear()` spring approximations. Durations 200–600ms; animate only opacity and transform. Rows enter staggered 50ms apart, sliding 16–24px from the left while fading. Press feedback: scale 0.97–0.985. Respect Reduce Motion (iOS) and `prefers-reduced-motion` (Windows): swap movement for fades. Nothing loops by itself.
 
-## Process
-1. Read `shared/design-tokens.json`, `windows/ui/styles.css`, `ios/Shared/Design.swift`, `ios/App/TodayView.swift`, `ios/App/TodayRows.swift`, `ios/App/HabitsView.swift`, `ios/Widgets/`, and the website components listed above.
-2. Update tokens first (add anything missing, e.g. line colour usage, eyebrow style, spring presets) and regenerate.
-3. Build the shared components once per platform (a `Design/` folder of SwiftUI views; a small component layer in `windows/ui/`), then apply them screen by screen: Today, Habits and History, Quick add, Calendar, Lists and Someday, Settings, Onboarding, widgets.
-4. Keep every screen functional at each step; run the existing test suites after each screen (`windows/tests`, `ios/Tests`, UI tests) and fix regressions. Update `docs/mockups` screenshots when done.
-5. Check both themes, Dynamic Type at the largest sizes, window widths from 720px up, and Reduce Motion.
-
-Deliver small commits per screen with before/after screenshots in the PR description.
+## Step 5: how to work
+- `shared/design-tokens.json` stays the single source of truth; add anything missing there and regenerate (`npm run tokens` / `npm run generate` in `windows/`). Keep the token-drift test passing.
+- Order: tokens → shared components → Today → Habits + History → Quick add → Calendar, Lists, Someday → Settings and Onboarding → widgets.
+- One commit per screen, run the existing tests after each (`windows/tests`, `ios/Tests`, UI tests), and keep every screen working at each step.
+- Check light and dark, Dynamic Type at the largest sizes, Windows window widths from 720px up, VoiceOver labels, keyboard focus and Reduce Motion.
+- Finish by updating `docs/mockups` screenshots and giving me side-by-side before/after images of each screen next to the website's version.
