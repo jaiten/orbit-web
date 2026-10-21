@@ -2,8 +2,6 @@
 import { BentoCard, BentoGrid } from "@/components/kokonut/BentoGrid";
 import { ChecklistWidget, GridWidget, LockScreen, ProgressWidget } from "@/components/widgets/Widgets";
 import { Reveal, RevealGroup, reveal } from "@/components/ui/Reveal";
-import { VideoSlot } from "@/components/ui/VideoSlot";
-import { videos } from "@/lib/media";
 import { m } from "motion/react";
 
 type Tile = { label: string; className: string; render: (a: boolean) => React.ReactNode };
@@ -44,13 +42,10 @@ export function WidgetsSection() {
           <p className="mt-4 text-center text-[13px] text-muted xl:text-left">Hover, tap or focus a widget to see it respond.</p>
         </m.div>
 
-        <RevealGroup className="grid gap-6 sm:grid-cols-2 xl:grid-cols-1">
+        <RevealGroup className="grid gap-6">
           <m.div variants={reveal}>
             <BentoCard label="Lock Screen widgets: a progress count, the next item and a habit gauge." className="h-[22rem]">{(a) => <LockScreen active={a} />}</BentoCard>
             <p className="mt-3 text-[14px] text-muted">Lock Screen widgets keep the count and your next item in sight.</p>
-          </m.div>
-          <m.div variants={reveal} className="sm:justify-self-end xl:justify-self-start">
-            <VideoSlot slot={videos.widgetUpdate} maxWidth={220} />
           </m.div>
         </RevealGroup>
       </div>

@@ -2,8 +2,6 @@
 import { m } from "motion/react";
 import { Check, Plus } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
-import { VideoSlot } from "@/components/ui/VideoSlot";
-import { videos } from "@/lib/media";
 import { spring } from "@/lib/motion";
 
 const actions = [
@@ -14,7 +12,7 @@ const actions = [
 export function SiriSection() {
   return (
     <section aria-labelledby="siri-title" className="mx-auto max-w-6xl px-6 pb-24 sm:pb-32">
-      <Reveal className="grid items-center gap-10 rounded-[18px] bg-surface p-6 shadow-card ring-1 ring-line sm:p-10 md:grid-cols-[1.4fr_1fr]">
+      <Reveal className="grid items-center gap-10 rounded-[18px] bg-surface p-6 shadow-card ring-1 ring-line sm:p-10">
         <div>
           <p className="eyebrow">Siri and Shortcuts</p>
           <h2 id="siri-title" className="section-title mt-3 !text-[clamp(30px,4vw,44px)]">Say it. It is in your plan.</h2>
@@ -28,9 +26,6 @@ export function SiriSection() {
               </m.li>
             ))}
           </ul>
-        </div>
-        <div className="justify-self-center md:justify-self-end">
-          <VideoSlot slot={videos.siri} maxWidth={230} />
         </div>
       </Reveal>
     </section>

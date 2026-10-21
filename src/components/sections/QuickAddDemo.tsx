@@ -4,9 +4,7 @@ import { AnimatePresence, LayoutGroup, m, useInView } from "motion/react";
 import { Plus } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { Tick } from "@/components/ui/Tick";
-import { VideoSlot } from "@/components/ui/VideoSlot";
 import { chipParts, parse } from "@/lib/quick-add";
-import { videos } from "@/lib/media";
 import { spring } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 
@@ -79,9 +77,6 @@ export function QuickAddDemo() {
           <p className="eyebrow">Quick add</p>
           <h2 id="qa-title" className="section-title mt-3">One box. Plain words.</h2>
           <p className="lead mt-5 max-w-md">Type it the way you would say it. “gym tomorrow 6pm”, “read every day”, “#work” or “someday”. A small chip shows what will be created before you save.</p>
-          <div className="mt-8 hidden lg:block">
-            <VideoSlot slot={videos.quickAdd} maxWidth={200} />
-          </div>
         </Reveal>
 
         <Reveal>
@@ -160,9 +155,6 @@ export function QuickAddDemo() {
             </LayoutGroup>
           </div>
         </Reveal>
-        <div className="lg:hidden">
-          <VideoSlot slot={videos.quickAdd} maxWidth={220} />
-        </div>
       </div>
     </section>
   );

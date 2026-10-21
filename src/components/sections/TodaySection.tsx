@@ -4,8 +4,6 @@ import { m, useInView, useMotionValueEvent, useScroll } from "motion/react";
 import { PhoneFrame } from "@/components/devices/PhoneFrame";
 import { TodayPhone, type PhoneTask } from "@/components/devices/TodayPhone";
 import { Reveal } from "@/components/ui/Reveal";
-import { VideoSlot } from "@/components/ui/VideoSlot";
-import { videos } from "@/lib/media";
 import { spring } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 import { cn } from "@/lib/cn";
@@ -94,11 +92,7 @@ export function TodaySection() {
           </div>
         </div>
       </div>
-      <div className="mx-auto flex max-w-6xl flex-col items-center px-6 pb-24 pt-8 sm:pb-32">
-        <Reveal className="flex flex-col items-center">
-          <VideoSlot slot={videos.tickItems} maxWidth={220} />
-        </Reveal>
-      </div>
+      <div className="h-24 sm:h-32" aria-hidden />
     </section>
   );
 }

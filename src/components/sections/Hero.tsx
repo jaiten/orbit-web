@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { m, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { Monitor, Smartphone } from "lucide-react";
 import { OrbitMark } from "@/components/brand/OrbitMark";
@@ -13,6 +14,13 @@ import { spring } from "@/lib/motion";
 
 export function Hero() {
   const reduced = useReducedMotion();
+  // Entrance: the window and phone rise out of the page and settle, then the first item gets ticked.
+  const [ticked, setTicked] = useState(false);
+  useEffect(() => {
+    if (reduced) return setTicked(true);
+    const id = window.setTimeout(() => setTicked(true), 1500);
+    return () => window.clearTimeout(id);
+  }, [reduced]);
   // Cursor tilt: the single parallax in this section.
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -35,7 +43,7 @@ export function Hero() {
   };
 
   const phoneTasks = [
-    { id: "walk", title: "Morning walk", time: "8:00 AM", done: true },
+    { id: "walk", title: "Morning walk", time: "8:00 AM", done: ticked },
     { id: "focus", title: "Focus on one thing", time: "10:00 AM" },
     { id: "call", title: "Call someone you miss" },
   ];
@@ -46,19 +54,21 @@ export function Hero() {
 
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden px-6 pb-20 pt-24 text-center sm:pt-28" onPointerMove={onMove} onPointerLeave={onLeave}>
-      <OrbitMark className="mx-auto size-24 sm:size-28" />
+      <m.div className="mx-auto size-24 sm:size-28" initial={{ scale: 0.85 }} animate={{ scale: 1 }} transition={spring.soft}>
+        <OrbitMark className="size-full" />
+      </m.div>
       <h1 id="hero-title" className="display mx-auto mt-6 max-w-4xl text-[clamp(44px,8.4vw,80px)]">
         A little space for what matters.
       </h1>
       <p className="lead mx-auto mt-5 max-w-xl">Capture anything, plan today, see your progress. On iPhone and Windows.</p>
-      <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      <m.div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring.ui, delay: 0.15 }}>
         <Button href={links.testflight} size="lg" className="w-full sm:w-auto">
           <Smartphone size={18} /> Join the iPhone beta
         </Button>
         <Button href={links.windows} size="lg" variant="secondary" className="w-full sm:w-auto">
           <Monitor size={18} /> Download for Windows
         </Button>
-      </div>
+      </m.div>
       <p className="mt-4 text-[14px] text-muted">Free. iPhone through TestFlight, Windows as a portable app.</p>
 
       <m.div
@@ -66,16 +76,30 @@ export function Hero() {
         style={{ perspective: 1400 }}
       >
         <m.div className="flex flex-col items-center md:flex-row md:items-end md:justify-center" style={{ rotateX: reduced ? 0 : rotateX, rotateY: reduced ? 0 : rotateY, transformStyle: "preserve-3d" }}>
-          <m.div className="w-full md:w-[70%]" animate={reduced ? undefined : { y: [0, -6, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}>
-            <WindowFrame label="Orbit on Windows: the Today screen with tasks, habits and a progress card." slot={screenshots.windowsToday}>
-              <DesktopApp doneIds={["walk"]} />
-            </WindowFrame>
+          <m.div
+            className="w-full md:w-[70%]"
+            style={{ transformOrigin: "50% 100%" }}
+            initial={{ opacity: 0, y: 96, rotateX: 16, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+            transition={{ ...spring.soft, delay: 0.1 }}
+          >
+            <m.div animate={reduced ? undefined : { y: [0, -6, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}>
+              <WindowFrame label="Orbit on Windows: the Today screen with tasks, habits and a progress card." slot={screenshots.windowsToday}>
+                <DesktopApp doneIds={ticked ? ["walk"] : []} />
+              </WindowFrame>
+            </m.div>
           </m.div>
           <m.div className="relative z-10 -mt-14 w-[56%] max-w-[260px] md:-ml-[7%] md:mt-0 md:w-[26%] md:max-w-none" style={{ x: reduced ? 0 : phoneX, y: reduced ? 0 : phoneY }}>
-            <m.div animate={reduced ? undefined : { y: [0, 8, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}>
-              <PhoneFrame label="Orbit on iPhone: the Today screen with tasks, habits and a progress card." slot={screenshots.iosToday}>
-                <TodayPhone tasks={phoneTasks} habits={phoneHabits} />
-              </PhoneFrame>
+            <m.div
+              initial={{ opacity: 0, y: 140, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 140, damping: 20, delay: 0.3 }}
+            >
+              <m.div animate={reduced ? undefined : { y: [0, 8, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}>
+                <PhoneFrame label="Orbit on iPhone: the Today screen with tasks, habits and a progress card." slot={screenshots.iosToday}>
+                  <TodayPhone tasks={phoneTasks} habits={phoneHabits} />
+                </PhoneFrame>
+              </m.div>
             </m.div>
           </m.div>
         </m.div>

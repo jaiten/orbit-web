@@ -3,8 +3,6 @@ import { HabitGrid } from "@/components/bklit/HabitGrid";
 import { MiniBars } from "@/components/bklit/MiniBars";
 import { WeekBar } from "@/components/bklit/WeekBar";
 import { Reveal } from "@/components/ui/Reveal";
-import { VideoSlot } from "@/components/ui/VideoSlot";
-import { videos } from "@/lib/media";
 import { doneInLastSeven, habits, isDone, lastSeven, weeklyTotals } from "@/lib/sample-data";
 
 const featured = habits[1]; // Read a few pages: 5 of the last 7 days
@@ -37,9 +35,6 @@ export function HabitsSection() {
             <MiniBars values={weeklyTotals(featured)} color="var(--lavender)" label={`Days done in each of the last 12 weeks for ${featured.title}`} />
           </Reveal>
 
-          <div className="mt-8 hidden lg:block">
-            <VideoSlot slot={videos.dragToHabits} maxWidth={200} />
-          </div>
         </div>
 
         <Reveal>
@@ -71,9 +66,6 @@ export function HabitsSection() {
             </ul>
           </div>
         </Reveal>
-        <div className="lg:hidden">
-          <VideoSlot slot={videos.dragToHabits} maxWidth={220} />
-        </div>
       </div>
     </section>
   );

@@ -15,7 +15,7 @@ node scripts/serve-out.mjs 4000   # serve out/ with gzip, like a host would
 
 ## Structure
 - `src/styles/tokens.css`: the one place for colours, radii and themes (light, dark, system + toggle).
-- `src/lib/motion.ts`: every spring, stagger and reveal preset. `src/lib/media.ts`: your screenshots and videos. `src/lib/links.ts`: TestFlight / download URLs.
+- `src/lib/motion.ts`: every spring, stagger and reveal preset. `src/lib/media.ts`: optional real screenshots. `src/lib/links.ts`: TestFlight / download URLs.
 - `src/lib/quick-add.ts`: TS port of Orbit's shared parser; `scripts/test-quick-add.ts` checks it against the repo's 34 cases.
 - `src/components/sections/*`: one component per section. `devices/` holds the iPhone and Windows frames and live Today screens. `widgets/` the widget styles.
 - `kokonut/` and `bklit/`: see the note below.
@@ -32,5 +32,5 @@ Set before building: `NEXT_PUBLIC_TESTFLIGHT_URL` (the beta link; defaults to a 
 **GitHub Pages (optional, the workflow is manual-only):** Settings → Pages → Source: GitHub Actions, then run the "Deploy to GitHub Pages" workflow from the Actions tab. Optionally add a repository variable `TESTFLIGHT_URL`. Push to `main`; `.github/workflows/pages.yml` builds with the right base path and publishes. For a custom domain or a `<user>.github.io` repo, drop the base path line in the workflow.
 
 ## Notes
-- Motion respects `prefers-reduced-motion`: movement becomes fades, videos don't autoplay, the Today section is not pinned.
+- Motion respects `prefers-reduced-motion`: movement becomes fades, the Today section is not pinned.
 - Below-the-fold sections are server-rendered HTML that hydrate as they near the viewport (`LazyIsland`) to keep first load fast.
