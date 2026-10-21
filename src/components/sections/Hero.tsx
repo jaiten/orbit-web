@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
 import { m, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { Monitor, Smartphone } from "lucide-react";
-import { HeroMark } from "./HeroMark";
+import { OrbitMark } from "@/components/brand/OrbitMark";
 import { PhoneFrame } from "@/components/devices/PhoneFrame";
 import { WindowFrame } from "@/components/devices/WindowFrame";
 import { TodayPhone } from "@/components/devices/TodayPhone";
@@ -14,16 +13,6 @@ import { spring } from "@/lib/motion";
 
 export function Hero() {
   const reduced = useReducedMotion();
-  const [ready, setReady] = useState(false);
-  const [ticked, setTicked] = useState(false);
-
-  // After the devices land, one item is ticked off on both screens.
-  useEffect(() => {
-    if (!ready || reduced) return;
-    const id = window.setTimeout(() => setTicked(true), 1100);
-    return () => window.clearTimeout(id);
-  }, [ready, reduced]);
-
   // Cursor tilt: the single parallax in this section.
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -46,7 +35,7 @@ export function Hero() {
   };
 
   const phoneTasks = [
-    { id: "walk", title: "Morning walk", time: "8:00 AM", done: ticked },
+    { id: "walk", title: "Morning walk", time: "8:00 AM", done: true },
     { id: "focus", title: "Focus on one thing", time: "10:00 AM" },
     { id: "call", title: "Call someone you miss" },
   ];
@@ -57,7 +46,7 @@ export function Hero() {
 
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden px-6 pb-20 pt-24 text-center sm:pt-28" onPointerMove={onMove} onPointerLeave={onLeave}>
-      <HeroMark onDone={() => setReady(true)} />
+      <OrbitMark className="mx-auto size-24 sm:size-28" />
       <h1 id="hero-title" className="display mx-auto mt-6 max-w-4xl text-[clamp(44px,8.4vw,80px)]">
         A little space for what matters.
       </h1>
@@ -75,14 +64,11 @@ export function Hero() {
       <m.div
         className="mx-auto mt-12 max-w-[1080px]"
         style={{ perspective: 1400 }}
-        initial={{ opacity: 0, y: 72 }}
-        animate={ready ? { opacity: 1, y: 0 } : undefined}
-        transition={spring.soft}
       >
         <m.div className="flex flex-col items-center md:flex-row md:items-end md:justify-center" style={{ rotateX: reduced ? 0 : rotateX, rotateY: reduced ? 0 : rotateY, transformStyle: "preserve-3d" }}>
           <m.div className="w-full md:w-[70%]" animate={reduced ? undefined : { y: [0, -6, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}>
             <WindowFrame label="Orbit on Windows: the Today screen with tasks, habits and a progress card." slot={screenshots.windowsToday}>
-              <DesktopApp doneIds={ticked ? ["walk"] : []} />
+              <DesktopApp doneIds={["walk"]} />
             </WindowFrame>
           </m.div>
           <m.div className="relative z-10 -mt-14 w-[56%] max-w-[260px] md:-ml-[7%] md:mt-0 md:w-[26%] md:max-w-none" style={{ x: reduced ? 0 : phoneX, y: reduced ? 0 : phoneY }}>

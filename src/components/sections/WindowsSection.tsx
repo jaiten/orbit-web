@@ -17,7 +17,12 @@ const norm = (k: string) => (k === "Control" ? "ctrl" : k === " " ? "space" : k.
 
 export function WindowsSection() {
   const ref = useRef<HTMLDivElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.3 });
+  // The demo owns the shortcuts only while the visitor's pointer or focus is on it, so find-in-page keeps working everywhere else.
+  const armed = useRef(false);
+  const [canLock, setCanLock] = useState(false);
+  const [locked, setLocked] = useState(false);
   const [page, setPage] = useState<PageId>("today");
   const [quickAdd, setQuickAdd] = useState<string | null>(null);
   const [search, setSearch] = useState<string | null>(null);
@@ -63,11 +68,15 @@ export function WindowsSection() {
       setPressed((p) => new Set(p).add(k));
       if (e.target instanceof HTMLElement && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.isContentEditable)) return;
       if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+      let handled = true;
       if (e.shiftKey && k === " ") doQuickAdd();
       else if (k === "n") doQuickAdd();
       else if (/^[1-5]$/.test(k)) goTo(Number(k) - 1);
       else if (k === "f") doSearch();
       else if (k === "/") setPulse((n) => n + 1);
+      else handled = false;
+      // Stops the browser's own Ctrl+F and tab switching. Ctrl+N is reserved by browsers outside fullscreen key capture.
+      if (handled && armed.current) e.preventDefault();
     };
     const up = (e: KeyboardEvent) => {
       const k = norm(e.key);
@@ -89,6 +98,26 @@ export function WindowsSection() {
       window.removeEventListener("blur", clear);
     };
   }, [inView, doQuickAdd, goTo, doSearch]);
+
+  useEffect(() => {
+    setCanLock(typeof document.documentElement.requestFullscreen === "function" && "keyboard" in navigator && "lock" in (navigator as Navigator & { keyboard: { lock?: unknown } }).keyboard);
+    const onFs = () => {
+      const on = document.fullscreenElement === stage.current;
+      setLocked(on);
+      armed.current = on || armed.current;
+      if (!on) (navigator as Navigator & { keyboard?: { unlock?: () => void } }).keyboard?.unlock?.();
+    };
+    document.addEventListener("fullscreenchange", onFs);
+    return () => document.removeEventListener("fullscreenchange", onFs);
+  }, []);
+
+  // Fullscreen plus the Keyboard Lock API (Chrome, Edge) hands Ctrl+N and friends to the page. Esc leaves.
+  const captureKeys = async () => {
+    try {
+      await stage.current?.requestFullscreen();
+      await (navigator as Navigator & { keyboard: { lock: () => Promise<void> } }).keyboard.lock();
+    } catch {}
+  };
 
   // Clicking a keycap group plays the same action, for touch and for keys the browser keeps for itself.
   const flash = async (keys: string[], action: () => void) => {
@@ -117,7 +146,15 @@ export function WindowsSection() {
           <p className="lead mt-5">Orbit for Windows is built for the keys under your hands. Add from anywhere, jump between pages, and search without reaching for the mouse.</p>
         </Reveal>
 
-        <Reveal className="mx-auto mt-14 max-w-[1100px]">
+        <div
+          ref={stage}
+          className="[&:fullscreen]:flex [&:fullscreen]:flex-col [&:fullscreen]:justify-center [&:fullscreen]:overflow-auto [&:fullscreen]:bg-canvas [&:fullscreen]:px-8"
+          onPointerEnter={() => (armed.current = true)}
+          onPointerLeave={() => (armed.current = locked)}
+          onFocus={() => (armed.current = true)}
+          onBlur={() => (armed.current = locked)}
+        >
+        <Reveal className="mx-auto mt-14 max-w-[1100px] w-full">
           <div ref={ref}>
             <WindowFrame label="Orbit on Windows. The window responds as you press the shortcuts below." slot={screenshots.windowsToday}>
               <DesktopApp page={page} quickAdd={quickAdd} search={search} />
@@ -128,7 +165,15 @@ export function WindowsSection() {
         <m.div animate={{ scale: pulse ? [1, 1.015, 1] : 1 }} key={pulse} transition={{ duration: 0.4 }} className="mx-auto mt-10 max-w-[1100px] rounded-[18px] bg-surface p-6 shadow-card ring-1 ring-line sm:p-8">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="text-[19px] font-semibold tracking-[-0.02em]">Try the keys</h3>
-            <p className="text-[14px] text-muted">Press them on your keyboard, or click a pair. Your browser may keep some for itself.</p>
+            <p className="text-[14px] text-muted">
+              {locked ? "Keys captured. Press Esc to leave." : "Point at the window and press the keys, or click a pair."}
+              {canLock && !locked && (
+                <>
+                  {" "}Ctrl+N belongs to your browser,{" "}
+                  <button type="button" onClick={captureKeys} className="rounded font-medium text-accent-text underline underline-offset-2">capture keys</button> to use it.
+                </>
+              )}
+            </p>
           </div>
           <div className="mt-6 grid gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
             {groups.map((g) => (
@@ -143,6 +188,7 @@ export function WindowsSection() {
             Also <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Space</kbd> or <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Enter</kbd> to complete the focused item, <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">E</kbd> to edit it, and a global quick add on <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Ctrl+Shift+Space</kbd> from any app.
           </p>
         </m.div>
+        </div>
 
         <RevealGroup className="mx-auto mt-6 grid max-w-[1100px] gap-6 md:grid-cols-3">
           <m.div variants={reveal} className="rounded-[18px] bg-surface p-6 shadow-card ring-1 ring-line">

@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { m } from "motion/react";
 import { Tick } from "@/components/ui/Tick";
 import { habits } from "@/lib/sample-data";
@@ -26,7 +27,7 @@ export function ProgressWidget({ size, active }: { size: Size; active: boolean }
             <circle cx="50" cy="50" r="42" fill="none" strokeWidth="9" style={{ stroke: "color-mix(in srgb, var(--ink) 8%, transparent)" }} />
             <m.circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" strokeWidth="9" strokeLinecap="round" initial={false} animate={{ pathLength: done / total }} transition={spring.soft} />
           </svg>
-          <div className="absolute inset-0 grid place-items-center text-[22px] font-semibold tracking-tight">{done}<span className="text-[13px] font-normal text-muted">/{total}</span></div>
+          <div className="absolute inset-0 flex items-center justify-center text-[24px] font-semibold leading-none tracking-tight tabular-nums">{done}<span className="ml-px text-[13px] font-normal text-muted">/{total}</span></div>
         </div>
         <div className="text-center text-[12px] text-muted">{done} of {total} done</div>
       </div>
@@ -49,22 +50,32 @@ export function ProgressWidget({ size, active }: { size: Size; active: boolean }
   );
 }
 
-/** Checklist: tick items off from the Home Screen. Hovering ticks the next open one. */
-export function ChecklistWidget({ size, active }: { size: Size; active: boolean }) {
+/** Checklist: tick items off right here, like on the Home Screen. */
+export function ChecklistWidget({ size }: { size: Size; active?: boolean }) {
   const items = ["Morning walk", "Focus on one thing", "Call someone you miss", "Send the invoice", "Plan tomorrow"].slice(0, size === "l" ? 5 : 3);
+  const [done, setDone] = useState<Set<number>>(new Set([0]));
+  const toggle = (i: number) =>
+    setDone((d) => {
+      const n = new Set(d);
+      if (n.has(i)) n.delete(i);
+      else n.add(i);
+      return n;
+    });
   return (
     <div className="flex h-full flex-col p-5">
-      <div className="mb-3 flex items-baseline justify-between"><Label>Checklist</Label><span className="text-[12px] text-muted">{active ? 2 : 1} of {items.length}</span></div>
-      <ul className="flex flex-1 flex-col justify-around gap-1 text-[15px]">
-        {items.map((t, i) => {
-          const done = i === 0 || (i === 1 && active);
-          return (
-            <li key={t} className="flex items-center gap-3">
-              <Tick done={done} size={24} />
-              <span className={done ? "text-muted line-through" : ""}>{t}</span>
-            </li>
-          );
-        })}
+      <div className="mb-2 flex items-baseline justify-between">
+        <Label>Checklist</Label>
+        <span className="text-[12px] text-muted" aria-live="polite">{done.size} of {items.length}</span>
+      </div>
+      <ul className="flex flex-1 flex-col justify-around text-[15px]">
+        {items.map((t, i) => (
+          <li key={t}>
+            <button type="button" role="checkbox" aria-checked={done.has(i)} onClick={() => toggle(i)} className="flex w-full items-center gap-3 rounded-[10px] py-1.5 text-left transition-colors hover:bg-ink/[0.04] active:scale-[0.99]">
+              <Tick done={done.has(i)} size={24} />
+              <span className={done.has(i) ? "text-muted line-through" : ""}>{t}</span>
+            </button>
+          </li>
+        ))}
       </ul>
     </div>
   );

@@ -27,6 +27,7 @@ export function QuickAddDemo() {
   const [added, setAdded] = useState<Added[]>([]);
   const [pressing, setPressing] = useState(false);
   const nextId = useRef(1);
+  const ran = useRef(false);
 
   useEffect(() => setNow(new Date()), []);
 
@@ -42,16 +43,16 @@ export function QuickAddDemo() {
 
   // Auto-typing runs while the demo is on screen, until the visitor takes over.
   useEffect(() => {
-    if (!inView || interacted || !now) return;
+    if (!inView || interacted || !now || ran.current) return;
     if (reduced) {
       setValue(PHRASES[0]);
       return;
     }
+    ran.current = true; // Each phrase is typed and added once, then the demo is the visitor's.
     let cancelled = false;
     (async () => {
-      let i = 0;
-      while (!cancelled) {
-        const phrase = PHRASES[i++ % PHRASES.length];
+      for (const phrase of PHRASES) {
+        if (cancelled) return;
         for (let c = 1; c <= phrase.length && !cancelled; c++) {
           setValue(phrase.slice(0, c));
           await wait(60 + Math.random() * 40);
