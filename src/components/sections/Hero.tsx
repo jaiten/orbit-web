@@ -81,11 +81,9 @@ export function Hero() {
             animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
             transition={{ ...spring.soft, delay: 0.1 }}
           >
-            <m.div animate={reduced ? undefined : { y: [0, -6, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}>
-              <WindowFrame label="Orbit on Windows: the Today screen with tasks, habits and a progress card." slot={screenshots.windowsToday}>
+            <WindowFrame label="Orbit on Windows: the Today screen with tasks, habits and a progress card." slot={screenshots.windowsToday}>
                 <DesktopApp doneIds={ticked ? ["walk"] : []} />
               </WindowFrame>
-            </m.div>
           </m.div>
           <m.div className="relative z-10 -mt-14 w-[56%] max-w-[260px] md:-ml-[7%] md:mt-0 md:w-[26%] md:max-w-none" style={{ x: reduced ? 0 : phoneX, y: reduced ? 0 : phoneY }}>
             <m.div
@@ -93,11 +91,9 @@ export function Hero() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ type: "spring", stiffness: 140, damping: 20, delay: 0.3 }}
             >
-              <m.div animate={reduced ? undefined : { y: [0, 8, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}>
-                <PhoneFrame label="Orbit on iPhone: the Today screen with tasks, habits and a progress card." slot={screenshots.iosToday}>
+              <PhoneFrame label="Orbit on iPhone: the Today screen with tasks, habits and a progress card." slot={screenshots.iosToday}>
                   <TodayPhone tasks={phoneTasks} habits={phoneHabits} />
                 </PhoneFrame>
-              </m.div>
             </m.div>
           </m.div>
         </m.div>

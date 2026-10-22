@@ -12,7 +12,7 @@ export function WeekBar({ done, color, size = "md", showLabels = false, classNam
       <m.div className="flex gap-1.5" initial="hidden" whileInView="show" viewport={viewportOnce} variants={{ show: { transition: { staggerChildren: STAGGER } } }}>
         {done.map((d, i) => (
           <div key={i} className="flex-1">
-            <div className={cn("w-full overflow-hidden rounded-full", h)} style={{ background: "color-mix(in srgb, var(--ink) 8%, transparent)" }}>
+            <div className={cn("w-full origin-center overflow-hidden rounded-full transition-transform duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-y-[1.7]", h)} style={{ background: "color-mix(in srgb, var(--ink) 8%, transparent)" }}>
               <m.div
                 className="h-full w-full origin-left rounded-full"
                 style={{ background: color }}

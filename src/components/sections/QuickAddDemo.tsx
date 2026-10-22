@@ -9,7 +9,7 @@ import { spring } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 
 const PHRASES = ["gym tomorrow 6pm", "read every day", "call mum someday"];
-const SUGGESTIONS = [...PHRASES, "email Sam #work friday"];
+const SUGGESTIONS = [...PHRASES, "dentist friday 3:30pm"];
 
 interface Added { id: number; title: string; chip: string[]; kind: "task" | "habit" }
 
@@ -76,7 +76,7 @@ export function QuickAddDemo() {
         <Reveal>
           <p className="eyebrow">Quick add</p>
           <h2 id="qa-title" className="section-title mt-3">One box. Plain words.</h2>
-          <p className="lead mt-5 max-w-md">Type it the way you would say it. “gym tomorrow 6pm”, “read every day”, “#work” or “someday”. A small chip shows what will be created before you save.</p>
+          <p className="lead mt-5 max-w-md">Type it the way you would say it. “gym tomorrow 6pm”, “read every day” or “call mum someday”. A small chip shows what will be created before you save.</p>
         </Reveal>
 
         <Reveal>

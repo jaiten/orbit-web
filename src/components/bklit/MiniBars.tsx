@@ -16,9 +16,10 @@ export function MiniBars({ values, max = 7, color, label }: { values: number[]; 
         variants={{ show: { transition: { staggerChildren: STAGGER / 2 } } }}
       >
         {values.map((v, i) => (
-          <div key={i} className="flex h-full flex-1 items-end rounded-[4px]" style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
+          <div key={i} className="group/bar relative flex h-full flex-1 items-end rounded-[4px]" style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
+            <span aria-hidden className="pointer-events-none absolute -top-7 left-1/2 z-10 -translate-x-1/2 scale-75 whitespace-nowrap rounded-full bg-ink px-2 py-0.5 text-[11px] font-medium text-canvas opacity-0 transition duration-150 group-hover/bar:scale-100 group-hover/bar:opacity-100">{v} of 7 days</span>
             <m.div
-              className="w-full origin-bottom rounded-[4px]"
+              className="w-full origin-bottom rounded-[4px] transition-[filter] duration-150 group-hover/bar:brightness-110"
               style={{ height: `${Math.max(6, (v / max) * 100)}%`, background: color, opacity: i === values.length - 1 ? 1 : 0.75 }}
               variants={{ hidden: { scaleY: 0 }, show: { scaleY: 1, transition: spring.ui } }}
             />

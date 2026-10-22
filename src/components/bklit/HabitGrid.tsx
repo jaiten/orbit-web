@@ -12,13 +12,15 @@ interface Props {
   /** Fill cell by cell with an anime.js stagger when scrolled into view. */
   animateIn?: boolean;
   label: string;
+  /** Hover text per box, same order as levels. */
+  tips?: string[];
   className?: string;
 }
 
 const opacityFor = (level: number) => (level <= 0 ? 0 : 0.3 + 0.7 * Math.min(1, level));
 
 /** GitHub-style grid of small boxes. Bklit-style API: data in, colour in. */
-export function HabitGrid({ levels, color, weeks = 12, animateIn = false, label, className }: Props) {
+export function HabitGrid({ levels, color, weeks = 12, animateIn = false, label, tips, className }: Props) {
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export function HabitGrid({ levels, color, weeks = 12, animateIn = false, label,
       style={{ gridTemplateColumns: `repeat(${weeks}, minmax(0, 1fr))`, gridTemplateRows: "repeat(7, auto)", gridAutoFlow: "column" }}
     >
       {levels.map((level, i) => (
-        <span key={i} className="hg-cell aspect-square" data-filled={level > 0 ? "" : undefined} style={{ "--fill": color, "--o": opacityFor(level) } as React.CSSProperties} />
+        <span key={i} className="hg-cell aspect-square" data-filled={level > 0 ? "" : undefined} data-tip={tips?.[i]} style={{ "--fill": color, "--o": opacityFor(level) } as React.CSSProperties} />
       ))}
     </div>
   );

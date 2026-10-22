@@ -108,3 +108,30 @@ body {
   opacity: calc(var(--o, 0) * var(--f, 1));
   transform: scale(calc(0.4 + 0.6 * var(--f, 1)));
 }
+
+/* Habit-grid hover: the box grows a little and a small label names the day. */
+.hg-cell[data-tip] { transition: transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.hg-cell[data-tip]:hover { transform: scale(1.35); z-index: 5; }
+.hg-cell[data-tip]::before {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%) translateY(4px) scale(0.74);
+  white-space: nowrap;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--canvas);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease, transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.hg-cell[data-tip]:hover::before { opacity: 1; transform: translateX(-50%) translateY(0) scale(0.74); }
+@media (prefers-reduced-motion: reduce) {
+  .hg-cell[data-tip], .hg-cell[data-tip]::before { transition: none; }
+  .hg-cell[data-tip]:hover { transform: none; }
+}

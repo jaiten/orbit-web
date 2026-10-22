@@ -66,3 +66,13 @@ export const todayTasks: SampleTask[] = [
 export const overdueTask: SampleTask = { id: "pay", title: "Send the invoice" };
 
 export const weekdayLetters = ["M", "T", "W", "T", "F", "S", "S"];
+
+/** Hover text for each of the 84 days: "Mon 12 Oct · 6 of 6 glasses". The last day is the screens' "today" (20 Oct). */
+export function habitTips(h: SampleHabit): string[] {
+  return h.days.map((amount, i) => {
+    const d = new Date(2026, 9, 20 - (h.days.length - 1 - i));
+    const day = d.toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" });
+    if (h.target > 1) return `${day} · ${amount} of ${h.target}${h.unit ? " " + h.unit : ""}`;
+    return `${day} · ${amount ? "Done" : "Not done"}`;
+  });
+}
