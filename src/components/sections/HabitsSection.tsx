@@ -16,7 +16,7 @@ export function HabitsSection() {
         <div>
           <Reveal>
             <p className="eyebrow">Habits</p>
-            <h2 id="habits-title" className="section-title mt-3">Habits without guilt.</h2>
+            <h2 id="habits-title" className="section-title mt-3">See your progress</h2>
             <p className="lead mt-5 max-w-md">Habits are the only thing in Orbit that repeats. Daily, weekdays, weekends or weekly, with targets like “6 glasses a day”. They reset at midnight.</p>
           </Reveal>
 

@@ -12,7 +12,7 @@ const items = [
   { href: "/#features", label: "Features" },
   { href: "/#widgets", label: "Widgets" },
   { href: "/#windows", label: "Windows" },
-  { href: "/#privacy", label: "Privacy" },
+  { href: "/#sync", label: "Sync" },
 ];
 
 /** Floating pill. Translucent with blur; it shrinks slightly once the page scrolls. */

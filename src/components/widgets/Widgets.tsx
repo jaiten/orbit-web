@@ -10,12 +10,13 @@ const Label = ({ children }: { children: React.ReactNode }) => <div className="t
 const track = { background: "color-mix(in srgb, var(--ink) 8%, transparent)" };
 
 const PLAN = ["Morning walk", "Focus on one thing", "Call someone you miss", "Send the invoice", "Plan tomorrow"];
-type Plan = { done: Set<number>; toggle: (i: number) => void };
+type Plan = { done: Set<number>; toggle: (i: number) => void; waterToday: boolean; toggleWater: () => void };
 const PlanContext = createContext<Plan | null>(null);
 
 /** One shared plan for every Progress widget and the Lock Screen: tick an item in the large tile and they all follow. */
 export function PlanProvider({ children }: { children: React.ReactNode }) {
   const [done, setDone] = useState<Set<number>>(new Set([0, 3]));
+  const [waterToday, setWaterToday] = useState(false);
   const toggle = (i: number) =>
     setDone((d) => {
       const n = new Set(d);
@@ -23,7 +24,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       else n.add(i);
       return n;
     });
-  return <PlanContext.Provider value={{ done, toggle }}>{children}</PlanContext.Provider>;
+  return <PlanContext.Provider value={{ done, toggle, waterToday, toggleWater: () => setWaterToday((w) => !w) }}>{children}</PlanContext.Provider>;
 }
 const usePlan = () => {
   const ctx = useContext(PlanContext);
@@ -45,7 +46,7 @@ export function ProgressWidget({ size }: { size: Size; active?: boolean }) {
   if (size === "s")
     return (
       <div className="flex h-full flex-col justify-between p-4">
-        <Label>Today</Label>
+        <Label>Your plan</Label>
         <div className="relative mx-auto size-[78px]">
           <svg viewBox="0 0 100 100" className="size-full -rotate-90" aria-hidden>
             <circle cx="50" cy="50" r="42" fill="none" strokeWidth="9" style={{ stroke: "color-mix(in srgb, var(--ink) 8%, transparent)" }} />
@@ -99,8 +100,8 @@ export function ChecklistWidget({ size }: { size: Size; active?: boolean }) {
       <ul className="flex flex-1 flex-col justify-around text-[15px]">
         {items.map((t, i) => (
           <li key={t}>
-            <button type="button" role="checkbox" aria-checked={done.has(i)} onClick={() => toggle(i)} className="flex w-full items-center gap-3 rounded-[10px] py-1.5 text-left transition-colors hover:bg-ink/[0.04] active:scale-[0.99]">
-              <Tick done={done.has(i)} size={24} />
+            <button type="button" role="checkbox" aria-checked={done.has(i)} onClick={() => toggle(i)} className={`flex w-full items-center gap-3 rounded-[10px] text-left transition-colors hover:bg-ink/[0.04] active:scale-[0.99] ${size === "m" ? "py-0.5" : "py-1.5"}`}>
+              <Tick done={done.has(i)} size={size === "m" ? 22 : 24} />
               <span className={done.has(i) ? "text-muted line-through" : ""}>{t}</span>
             </button>
           </li>
@@ -110,43 +111,102 @@ export function ChecklistWidget({ size }: { size: Size; active?: boolean }) {
   );
 }
 
-/** One habit as a GitHub-style grid. Cell size follows the available height, so boxes stay square at every tile size. */
-function BoxGrid({ habit, weeks, active }: { habit: (typeof habits)[number]; weeks: number; active: boolean }) {
-  const days = habit.days.slice(-7 * weeks);
+// The Grid widget is a calendar: one box per date, filled in the habit's colour when it was done.
+// October 2026 starts on a Thursday (3 blank boxes when weeks start on Monday) and "today" is the 20th.
+const MONTH = { label: "October", blanks: 3, length: 31, today: 20 };
+const WEEKDAY_LETTERS = ["M", "T", "W", "T", "F", "S", "S"];
+const water = habits[1]; // "Read a few pages": one box per day, done or not
+
+/** How done a date is, 0 to 1. Dates after today are empty; today is whatever the visitor ticked. */
+function levelOn(date: number, todayDone: boolean) {
+  if (date > MONTH.today) return 0;
+  if (date === MONTH.today) return todayDone ? 1 : 0;
+  const amount = water.days[water.days.length - 1 - (MONTH.today - date)];
+  return Math.min(1, amount / water.target);
+}
+
+function DateBox({ date, todayDone, onToggle, numberSize }: { date: number; todayDone: boolean; onToggle: () => void; numberSize: string }) {
+  const level = levelOn(date, todayDone);
+  const isToday = date === MONTH.today;
+  const future = date > MONTH.today;
+  const style = { "--fill": "var(--lavender)", "--o": level ? 0.3 + 0.7 * level : 0 } as React.CSSProperties;
+  const number = (
+    <span aria-hidden className={`relative z-10 font-medium tabular-nums leading-none ${numberSize} ${future ? "text-muted/50" : level > 0.6 ? "text-white" : "text-ink/70"}`}>{date}</span>
+  );
+  const ring = isToday ? "ring-[1.5px] ring-accent" : "";
+  if (isToday)
+    return (
+      <button type="button" role="checkbox" aria-checked={todayDone} aria-label={`${MONTH.label} ${date}, today`} onClick={onToggle} className={`hg-cell flex aspect-square items-center justify-center transition-transform duration-150 active:scale-90 ${ring}`} style={style}>
+        <m.span aria-hidden className="absolute inset-0 rounded-[3px]" style={{ background: "var(--lavender)" }} initial={false} animate={{ opacity: todayDone ? 1 : 0, scale: todayDone ? [1, 1.35, 1] : 0.6 }} transition={{ duration: 0.35 }} />
+        {number}
+      </button>
+    );
   return (
-    <div className="grid min-h-0 gap-[2px]" style={{ height: "100%", aspectRatio: `${weeks} / 7`, maxWidth: "100%", gridTemplateColumns: `repeat(${weeks}, 1fr)`, gridTemplateRows: "repeat(7, 1fr)", gridAutoFlow: "column" }}>
-      {days.map((a, i) => {
-        const level = Math.min(1, a / habit.target);
-        const style = { "--fill": `var(--${habit.color})`, "--o": level ? 0.3 + 0.7 * level : 0 } as React.CSSProperties;
-        if (i < days.length - 1) return <span key={i} className="hg-cell" style={style} />;
-        // Today's box is the one that fills on hover.
-        return (
-          <span key={i} className="hg-cell" style={{ ...style, "--o": 0 } as React.CSSProperties}>
-            <m.span className="absolute inset-0 rounded-[2px]" style={{ background: `var(--${habit.color})` }} initial={false} animate={{ opacity: active ? 1 : 0, scale: active ? [1, 1.5, 1] : 1 }} transition={{ duration: 0.35 }} />
-          </span>
-        );
-      })}
-    </div>
+    <span className="hg-cell flex aspect-square items-center justify-center" style={style}>
+      {number}
+    </span>
   );
 }
 
-/** Grid: GitHub-style boxes for habits. Hovering fills today's box. */
-export function GridWidget({ size, active }: { size: Size; active: boolean }) {
-  const list = habits.slice(0, size === "l" ? 2 : 1);
-  const weeks = size === "s" ? 8 : size === "m" ? 18 : 16;
-  return (
-    <div className="flex h-full flex-col gap-3 p-5">
-      <div className="flex items-baseline justify-between"><Label>Habits</Label>{size !== "s" && <span className="text-[12px] text-muted">Last {weeks} weeks</span>}</div>
-      <div className="flex min-h-0 flex-1 flex-col gap-3">
-        {list.map((h) => (
-          <div key={h.id} className="flex min-h-0 flex-1 flex-col gap-1.5">
-            {size !== "s" && <div className="text-[13px]">{h.title}</div>}
-            <div className="min-h-0 flex-1">
-              <BoxGrid habit={h} weeks={weeks} active={active} />
-            </div>
-          </div>
+const doneThisMonth = (todayDone: boolean) => Array.from({ length: MONTH.today }, (_, i) => levelOn(i + 1, todayDone)).filter((l) => l >= 1).length;
+
+/** Grid: a month (or a week) of habit boxes, with the date in each. Tap today's box to complete it. */
+export function GridWidget({ size }: { size: Size; active?: boolean }) {
+  const { waterToday, toggleWater } = usePlan();
+  const count = doneThisMonth(waterToday);
+  const month = (numberSize: string, gap: string, letters = true) => (
+    <div>
+      {letters && (
+        <div className={`mb-1 grid grid-cols-7 text-center text-[9px] font-medium text-muted ${gap}`}>
+          {WEEKDAY_LETTERS.map((d, i) => <span key={i}>{d}</span>)}
+        </div>
+      )}
+      <div className={`grid grid-cols-7 ${gap}`}>
+        {Array.from({ length: MONTH.blanks }, (_, i) => <span key={"b" + i} />)}
+        {Array.from({ length: MONTH.length }, (_, i) => (
+          <DateBox key={i} date={i + 1} todayDone={waterToday} onToggle={toggleWater} numberSize={numberSize} />
         ))}
       </div>
+    </div>
+  );
+
+  if (size === "s") {
+    // The last seven days, ending today.
+    const dates = Array.from({ length: 7 }, (_, i) => MONTH.today - 6 + i);
+    const letters = dates.map((d) => WEEKDAY_LETTERS[(MONTH.blanks + d - 1) % 7]);
+    return (
+      <div className="flex h-full flex-col justify-between p-4">
+        <Label>Habits</Label>
+        <div>
+          <div className="mb-1 grid grid-cols-7 gap-[3px] text-center text-[9px] font-medium text-muted">{letters.map((l, i) => <span key={i}>{l}</span>)}</div>
+          <div className="grid grid-cols-7 gap-[3px]">
+            {dates.map((d) => <DateBox key={d} date={d} todayDone={waterToday} onToggle={toggleWater} numberSize="text-[9px]" />)}
+          </div>
+        </div>
+        <div className="text-[12px] text-muted">{water.title}</div>
+      </div>
+    );
+  }
+  if (size === "m")
+    return (
+      <div className="flex h-full items-center gap-5 p-5">
+        <div className="min-w-0 flex-1">
+          <Label>{MONTH.label}</Label>
+          <div className="mt-1 text-[15px] font-medium">{water.title}</div>
+          <div className="mt-2 text-[28px] font-semibold leading-none tracking-[-0.03em] tabular-nums" aria-live="polite">{count}<span className="ml-1 text-[13px] font-normal text-muted">days</span></div>
+          <div className="mt-1.5 text-[12px] text-muted">Tap today to complete it</div>
+        </div>
+        <div className="w-[124px] shrink-0">{month("text-[7px]", "gap-[2px]", false)}</div>
+      </div>
+    );
+  return (
+    <div className="flex h-full flex-col gap-3 p-5">
+      <div className="flex items-baseline justify-between">
+        <Label>{MONTH.label}</Label>
+        <span className="text-[12px] text-muted" aria-live="polite">{count} of {MONTH.today} days</span>
+      </div>
+      <div className="text-[15px] font-medium">{water.title}</div>
+      <div className="min-h-0 flex-1">{month("text-[11px]", "gap-1")}</div>
     </div>
   );
 }

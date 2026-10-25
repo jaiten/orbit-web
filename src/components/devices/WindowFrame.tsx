@@ -10,11 +10,12 @@ export const WIN_H = 700;
 const TITLE_H = 36;
 
 /** Windows 11 window with a title bar and subtle reflection. Children render at 1100 x 664 below the title bar. */
-export function WindowFrame({ label, slot, children, className }: { label: string; slot?: ScreenshotSlot; children?: React.ReactNode; className?: string }) {
+/** `interactive` keeps the contents available to assistive tech and the keyboard (otherwise the frame is a described picture). */
+export function WindowFrame({ label, slot, children, className, interactive }: { label: string; slot?: ScreenshotSlot; children?: React.ReactNode; className?: string; interactive?: boolean }) {
   const useShot = slot?.ready;
   return (
-    <div role="img" aria-label={label} className={cn("relative w-full overflow-hidden rounded-[10px] bg-surface shadow-lift ring-1 ring-line", className)}>
-      <div aria-hidden={!useShot ? true : undefined}>
+    <div role={interactive ? "group" : "img"} aria-label={label} className={cn("relative w-full overflow-hidden rounded-[10px] bg-surface shadow-lift ring-1 ring-line", className)}>
+      <div aria-hidden={!useShot && !interactive ? true : undefined}>
         <ScaledBox width={WIN_W} height={WIN_H}>
           <div className="flex h-full w-full flex-col bg-canvas text-ink">
             <div className="flex shrink-0 items-center justify-between bg-surface/80" style={{ height: TITLE_H }}>

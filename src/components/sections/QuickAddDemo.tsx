@@ -74,9 +74,9 @@ export function QuickAddDemo() {
     <section id="features" aria-labelledby="qa-title" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-24 sm:py-32">
       <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
         <Reveal>
-          <p className="eyebrow">Quick add</p>
-          <h2 id="qa-title" className="section-title mt-3">One box. Plain words.</h2>
-          <p className="lead mt-5 max-w-md">Type it the way you would say it. “gym tomorrow 6pm”, “read every day” or “call mum someday”. A small chip shows what will be created before you save.</p>
+          <p className="eyebrow">Smart add</p>
+          <h2 id="qa-title" className="section-title mt-3">Smart add</h2>
+          <p className="lead mt-5 max-w-md">Intelligently plan your day with smart add. Use plain words to describe all the details of your task</p>
         </Reveal>
 
         <Reveal>
@@ -88,7 +88,7 @@ export function QuickAddDemo() {
                 add(value);
               }}
             >
-              <label htmlFor="qa-input" className="sr-only">Try quick add</label>
+              <label htmlFor="qa-input" className="sr-only">Try smart add</label>
               <div className="flex items-center gap-2 rounded-[12px] bg-canvas p-1.5 pl-4 ring-1 ring-line focus-within:ring-2 focus-within:ring-accent-text">
                 <Plus size={18} className="shrink-0 text-muted" aria-hidden />
                 <input

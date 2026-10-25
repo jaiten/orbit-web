@@ -4,32 +4,32 @@ import { links } from "@/lib/links";
 
 export const metadata: Metadata = {
   title: "Privacy",
-  description: "Orbit keeps your data on your device unless you turn on sync. No ads, no tracking.",
+  description: "What Orbit stores, when data leaves your device, and what it never does.",
   alternates: { canonical: "/privacy/" },
 };
 
-const sections = [
-  { h: "Your data stays on your device", p: "Orbit saves your tasks, habits and lists on the device you are using. If you never turn on sync, nothing leaves that device." },
-  { h: "Sync is your choice", p: "Sync is off until you sign in. When you do, Orbit uses your own account to keep iPhone and Windows in step. Changes are saved on the device first and sent afterwards, so Orbit keeps working offline. You can sign out at any time, and your data stays on the device." },
-  { h: "No ads, no tracking", p: "Orbit has no ads and no tracking. There are no advertising identifiers, and no analytics that follow you around." },
-  { h: "Your data is yours", p: "Export everything whenever you like: a JSON backup that both apps can read, and a CSV for spreadsheets. You do not need an account to export." },
-  { h: "This website", p: "This site does not use cookies for tracking. The only thing it stores is your light or dark theme choice, in your own browser." },
+const rows = [
+  { h: "What Orbit stores", p: "Your tasks, habits and lists. They are saved on the device you use, and nothing else is collected." },
+  { h: "Sync", p: "Sync is off until you sign in. When it is on, your data is sent to your own Orbit account so your devices match. Changes are saved on the device first, so Orbit works offline. If you sign out, the data stays on the device." },
+  { h: "Ads and tracking", p: "There are no ads, no advertising identifiers and no analytics in the apps." },
+  { h: "Your data", p: "You can export everything from Settings at any time, as a JSON backup that both apps can read or as a CSV. Exporting does not need an account." },
+  { h: "This website", p: "It does not use tracking cookies. The only thing it keeps is your light or dark theme choice, in your own browser." },
 ];
 
 export default function Privacy() {
   return (
-    <PageShell title="Privacy" intro="Short version: your plan is yours. Here is the longer version, in plain words.">
-      <div className="space-y-10">
-        {sections.map((s) => (
-          <section key={s.h}>
-            <h2 className="text-[22px] font-semibold tracking-[-0.02em]">{s.h}</h2>
-            <p className="mt-2 text-[17px] text-muted">{s.p}</p>
-          </section>
+    <PageShell title="Privacy" intro="What Orbit stores, when data leaves your device, and what it does not do">
+      <dl className="divide-y divide-line border-y border-line">
+        {rows.map((r) => (
+          <div key={r.h} className="grid gap-2 py-6 sm:grid-cols-[200px_1fr] sm:gap-8">
+            <dt className="text-[16px] font-semibold tracking-[-0.01em]">{r.h}</dt>
+            <dd className="text-[16px] text-muted">{r.p}</dd>
+          </div>
         ))}
-        <p className="border-t border-line pt-8 text-[15px] text-muted">
-          Questions? Open an issue on <a className="text-accent-text underline underline-offset-2" href={links.github}>GitHub</a> or visit <a className="text-accent-text underline underline-offset-2" href={links.support}>Support</a>.
-        </p>
-      </div>
+      </dl>
+      <p className="mt-8 text-[15px] text-muted">
+        Questions? Open an issue on <a className="text-accent-text underline underline-offset-2" href={links.github}>GitHub</a> or see <a className="text-accent-text underline underline-offset-2" href={links.support}>Support</a>.
+      </p>
     </PageShell>
   );
 }

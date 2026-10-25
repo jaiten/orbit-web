@@ -36,3 +36,9 @@ Springs, never linear: stiffness ~300, damping ~30 for UI; softer (response ~0.5
 - One commit per screen, run the existing tests after each (`windows/tests`, `ios/Tests`, UI tests), and keep every screen working at each step.
 - Check light and dark, Dynamic Type at the largest sizes, Windows window widths from 720px up, VoiceOver labels, keyboard focus and Reduce Motion.
 - Finish by updating `docs/mockups` screenshots and giving me side-by-side before/after images of each screen next to the website's version.
+
+## Step 6: two behaviour changes to include (not only visual)
+1. **Grid widget as a calendar.** Show a month (or a week) as squares in calendar layout: a Monday-first month is 5–6 rows of 7 boxes, around 30 boxes, and the small size shows the last 7 days. Each box shows its date number, fills in the habit colour when the habit was done that day (opacity by progress, as on the website), and today's box has a coral outline and can be tapped to complete it. Future dates stay empty. See `src/components/widgets/Widgets.tsx` (`GridWidget`) on the website for the exact look.
+2. **Back-fill habit days.** Let people record a habit they completed on an earlier day they forgot to log: in Habit History (and by tapping a past box in the calendar grid), allow adding or removing a check-in for any past date. Keep it quiet and non-judgemental: no warnings, no "late" labels, and the day simply fills in. Future dates can't be filled. This must write the same check-in records sync already uses so it merges cleanly across devices.
+
+Also rename "Quick add" to **Smart add** everywhere in both apps (UI text, shortcuts help, onboarding, Siri/Shortcuts descriptions) to match the website. Behaviour is unchanged.

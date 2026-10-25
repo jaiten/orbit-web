@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ChevronDown } from "lucide-react";
+import { Accordion } from "@/components/ui/Accordion";
 import { PageShell } from "@/components/ui/Prose";
 import { links } from "@/lib/links";
 
@@ -56,18 +56,8 @@ const faq = [
 
 export default function Support() {
   return (
-    <PageShell title="Support" intro="Answers to the questions we hear most. If yours is not here, we would like to hear it.">
-      <div className="divide-y divide-line rounded-[18px] bg-surface shadow-card ring-1 ring-line">
-        {faq.map((f) => (
-          <details key={f.q} className="group px-6 py-5 open:pb-6">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-md text-[18px] font-medium tracking-[-0.01em] [&::-webkit-details-marker]:hidden">
-              {f.q}
-              <ChevronDown size={20} className="shrink-0 text-muted transition-transform duration-300 group-open:rotate-180" aria-hidden />
-            </summary>
-            <div className="mt-3 space-y-3 text-[16px] text-muted [&_a]:text-accent-text [&_a]:underline [&_a]:underline-offset-2 [&_b]:font-medium [&_b]:text-ink">{f.a}</div>
-          </details>
-        ))}
-      </div>
+    <PageShell title="Support" intro="Answers to common questions about sync, Windows, exporting your data and the iPhone beta">
+      <Accordion items={faq} />
       <p className="mt-10 text-[15px] text-muted">
         Still stuck? <a className="text-accent-text underline underline-offset-2" href={`${links.github}/issues`}>Open an issue on GitHub</a>.
       </p>

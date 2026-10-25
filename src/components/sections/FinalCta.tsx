@@ -9,7 +9,7 @@ export function FinalCta() {
     <section id="get" aria-labelledby="cta-title" className="relative scroll-mt-20 overflow-hidden px-6 py-28 text-center sm:py-40">
       <OrbitPlay />
       <Reveal className="relative">
-        <h2 id="cta-title" className="display mx-auto mt-10 max-w-3xl text-[clamp(38px,6.4vw,64px)]">Make a little space today.</h2>
+        <h2 id="cta-title" className="display mx-auto mt-10 max-w-3xl text-[clamp(38px,6.4vw,64px)]">Make a little space today</h2>
         <p className="lead mx-auto mt-4 max-w-md">Free on iPhone and Windows.</p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button href={links.testflight} size="lg" className="w-full sm:w-auto"><Smartphone size={18} /> Join the iPhone beta</Button>

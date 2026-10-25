@@ -56,9 +56,9 @@ export function Hero() {
     <section aria-labelledby="hero-title" className="relative overflow-hidden px-6 pb-20 pt-24 text-center sm:pt-28" onPointerMove={onMove} onPointerLeave={onLeave}>
       <HeroMark />
       <h1 id="hero-title" className="display mx-auto mt-6 max-w-4xl text-[clamp(44px,8.4vw,80px)]">
-        A little space for what matters.
+        A little space for what matters
       </h1>
-      <p className="lead mx-auto mt-5 max-w-xl">Capture anything, plan today, see your progress. On iPhone and Windows.</p>
+      <p className="lead mx-auto mt-5 max-w-xl">Plan your day, see your progress, synced between iPhone and Windows</p>
       <m.div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring.ui, delay: 0.15 }}>
         <Button href={links.testflight} size="lg" className="w-full sm:w-auto">
           <Smartphone size={18} /> Join the iPhone beta

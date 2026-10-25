@@ -9,10 +9,10 @@ import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 import { cn } from "@/lib/cn";
 
 const STEPS = [
-  { title: "Only today.", body: "Today shows what is dated today, anything overdue, and the habits due today. Nothing else gets in." },
-  { title: "Overdue, handled gently.", body: "Anything that slipped offers three choices: Today, Later or Someday. No red badges, no pile-up." },
-  { title: "Choose, then move on.", body: "Today adds it to your day. Later removes the date. Someday keeps it safe on its own list for when you are ready." },
-  { title: "Tick it off.", body: "Finished items settle below the open ones, and your plan fills in as you go." },
+  { title: "Only today", body: "Today shows what is dated today, anything overdue, and the habits due today" },
+  { title: "Come back to it whenever", body: "Missed something? You choose when to pick it back up" },
+  { title: "Create lists", body: "Plan a task by choosing when to complete it, or set it aside with Later or Someday until you are ready" },
+  { title: "Tick it off", body: "Feel good about being finished as items settle below the open ones and your plan fills in" },
 ];
 
 const stepFor = (p: number) => (p < 0.18 ? 0 : p < 0.42 ? 1 : p < 0.68 ? 2 : 3);
@@ -54,7 +54,7 @@ export function TodaySection() {
           <div className="mx-auto grid w-full max-w-6xl items-center gap-x-16 gap-y-3 px-6 pt-[72px] max-md:justify-items-center max-md:text-center md:grid-cols-2 md:grid-rows-[auto_auto] md:content-center md:gap-y-8 md:pt-12">
             <div className="md:col-start-1 md:row-start-1 md:self-end">
               <p className="eyebrow">Today</p>
-              <h2 id="today-title" className="section-title mt-2 max-md:text-[30px] md:mt-3">A day you can actually finish.</h2>
+              <h2 id="today-title" className="section-title mt-2 max-md:text-[30px] md:mt-3">Simplify your day</h2>
             </div>
 
             <div className="md:col-start-1 md:row-start-2 md:self-start">

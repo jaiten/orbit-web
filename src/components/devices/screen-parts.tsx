@@ -21,23 +21,40 @@ export function PlanCard({ done, total, className = "" }: { done: number; total:
   );
 }
 
-export function TaskRow({ title, time, done, big }: { title: string; time?: string; done?: boolean; big?: boolean }) {
-  return (
-    <div className={`flex items-center gap-3 rounded-[12px] bg-surface px-[14px] shadow-[0_0_0_1px_var(--line)] ${big ? "h-14 text-[17px]" : "h-[46px] text-[15px]"}`}>
+const rowBase = "flex w-full items-center gap-3 rounded-[12px] bg-surface px-[14px] text-left shadow-[0_0_0_1px_var(--line)]";
+const press = "transition-[transform,box-shadow] duration-150 hover:shadow-[0_0_0_1px_var(--line),0_6px_16px_-10px_rgb(0_0_0/0.25)] active:scale-[0.985]";
+
+/** A task. Pass onToggle to make the whole row a checkbox. */
+export function TaskRow({ title, time, done, big, onToggle }: { title: string; time?: string; done?: boolean; big?: boolean; onToggle?: () => void }) {
+  const cls = `${rowBase} ${big ? "h-14 text-[17px]" : "h-[46px] text-[15px]"} ${onToggle ? `${press} cursor-pointer` : ""}`;
+  const inner = (
+    <>
       <Tick done={!!done} size={big ? 26 : 24} />
       <span className={`flex-1 truncate transition-colors duration-300 ${done ? "text-muted line-through decoration-1" : ""}`}>{title}</span>
       {time && <span className="text-[13px] text-muted">{time}</span>}
-    </div>
+    </>
+  );
+  return onToggle ? (
+    <button type="button" role="checkbox" aria-checked={!!done} onClick={onToggle} className={cls}>{inner}</button>
+  ) : (
+    <div className={cls}>{inner}</div>
   );
 }
 
-export function HabitRow({ title, color, count, done, big }: { title: string; color: HabitColor; count: string; done?: boolean; big?: boolean }) {
-  return (
-    <div className={`flex items-center gap-3 rounded-[12px] bg-surface px-[14px] shadow-[0_0_0_1px_var(--line)] ${big ? "h-14 text-[17px]" : "h-[46px] text-[15px]"}`}>
+/** A habit. Pass onClick to make the row a button that adds one check-in. */
+export function HabitRow({ title, color, count, done, big, onClick }: { title: string; color: HabitColor; count: string; done?: boolean; big?: boolean; onClick?: () => void }) {
+  const cls = `${rowBase} ${big ? "h-14 text-[17px]" : "h-[46px] text-[15px]"} ${onClick ? `${press} cursor-pointer` : ""}`;
+  const inner = (
+    <>
       <span aria-hidden className="size-[10px] rounded-full" style={{ background: habitVar(color) }} />
       <span className="flex-1 truncate">{title}</span>
       <span className={`text-[13px] ${done ? "text-accent-text" : "text-muted"}`}>{count}</span>
-    </div>
+    </>
+  );
+  return onClick ? (
+    <button type="button" onClick={onClick} aria-label={`${title}, ${count}. Add a check-in`} className={cls}>{inner}</button>
+  ) : (
+    <div className={cls}>{inner}</div>
   );
 }
 
