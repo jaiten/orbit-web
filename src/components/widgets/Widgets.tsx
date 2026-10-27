@@ -125,36 +125,30 @@ function levelOn(date: number, todayDone: boolean) {
   return Math.min(1, amount / water.target);
 }
 
-function DateBox({ date, todayDone, onToggle, numberSize }: { date: number; todayDone: boolean; onToggle: () => void; numberSize: string }) {
+/** One date as a plain square: no number, just how done it was. Today has a ring and toggles. */
+function DateBox({ date, todayDone, onToggle }: { date: number; todayDone: boolean; onToggle: () => void }) {
   const level = levelOn(date, todayDone);
   const isToday = date === MONTH.today;
-  const future = date > MONTH.today;
   const style = { "--fill": "var(--lavender)", "--o": level ? 0.3 + 0.7 * level : 0 } as React.CSSProperties;
-  const number = (
-    <span aria-hidden className={`relative z-10 font-medium tabular-nums leading-none ${numberSize} ${future ? "text-muted/50" : level > 0.6 ? "text-white" : "text-ink/70"}`}>{date}</span>
-  );
   const ring = isToday ? "ring-[1.5px] ring-accent" : "";
   if (isToday)
     return (
-      <button type="button" role="checkbox" aria-checked={todayDone} aria-label={`${MONTH.label} ${date}, today`} onClick={onToggle} className={`hg-cell flex aspect-square items-center justify-center transition-transform duration-150 active:scale-90 ${ring}`} style={style}>
+      <button type="button" role="checkbox" aria-checked={todayDone} aria-label={`${MONTH.label} ${date}, today`} onClick={onToggle} className={`hg-cell relative block aspect-square w-full transition-transform duration-150 active:scale-90 ${ring}`} style={style}>
         <m.span aria-hidden className="absolute inset-0 rounded-[3px]" style={{ background: "var(--lavender)" }} initial={false} animate={{ opacity: todayDone ? 1 : 0, scale: todayDone ? [1, 1.35, 1] : 0.6 }} transition={{ duration: 0.35 }} />
-        {number}
       </button>
     );
   return (
-    <span className="hg-cell flex aspect-square items-center justify-center" style={style}>
-      {number}
-    </span>
+    <span className={`hg-cell block aspect-square w-full ${date > MONTH.today ? "opacity-50" : ""}`} style={style} title={`${MONTH.label} ${date}`} />
   );
 }
 
 const doneThisMonth = (todayDone: boolean) => Array.from({ length: MONTH.today }, (_, i) => levelOn(i + 1, todayDone)).filter((l) => l >= 1).length;
 
-/** Grid: a month (or a week) of habit boxes, with the date in each. Tap today's box to complete it. */
+/** Grid: a month (or a week) of square habit boxes, one per date. Tap today's box to complete it. */
 export function GridWidget({ size }: { size: Size; active?: boolean }) {
   const { waterToday, toggleWater } = usePlan();
   const count = doneThisMonth(waterToday);
-  const month = (numberSize: string, gap: string, letters = true) => (
+  const month = (gap: string, letters = true) => (
     <div>
       {letters && (
         <div className={`mb-1 grid grid-cols-7 text-center text-[9px] font-medium text-muted ${gap}`}>
@@ -164,7 +158,7 @@ export function GridWidget({ size }: { size: Size; active?: boolean }) {
       <div className={`grid grid-cols-7 ${gap}`}>
         {Array.from({ length: MONTH.blanks }, (_, i) => <span key={"b" + i} />)}
         {Array.from({ length: MONTH.length }, (_, i) => (
-          <DateBox key={i} date={i + 1} todayDone={waterToday} onToggle={toggleWater} numberSize={numberSize} />
+          <DateBox key={i} date={i + 1} todayDone={waterToday} onToggle={toggleWater} />
         ))}
       </div>
     </div>
@@ -180,7 +174,7 @@ export function GridWidget({ size }: { size: Size; active?: boolean }) {
         <div>
           <div className="mb-1 grid grid-cols-7 gap-[3px] text-center text-[9px] font-medium text-muted">{letters.map((l, i) => <span key={i}>{l}</span>)}</div>
           <div className="grid grid-cols-7 gap-[3px]">
-            {dates.map((d) => <DateBox key={d} date={d} todayDone={waterToday} onToggle={toggleWater} numberSize="text-[9px]" />)}
+            {dates.map((d) => <DateBox key={d} date={d} todayDone={waterToday} onToggle={toggleWater} />)}
           </div>
         </div>
         <div className="text-[12px] text-muted">{water.title}</div>
@@ -196,7 +190,7 @@ export function GridWidget({ size }: { size: Size; active?: boolean }) {
           <div className="mt-2 text-[28px] font-semibold leading-none tracking-[-0.03em] tabular-nums" aria-live="polite">{count}<span className="ml-1 text-[13px] font-normal text-muted">days</span></div>
           <div className="mt-1.5 text-[12px] text-muted">Tap today to complete it</div>
         </div>
-        <div className="w-[124px] shrink-0">{month("text-[7px]", "gap-[2px]", false)}</div>
+        <div className="w-[124px] shrink-0">{month("gap-[3px]", false)}</div>
       </div>
     );
   return (
@@ -206,7 +200,7 @@ export function GridWidget({ size }: { size: Size; active?: boolean }) {
         <span className="text-[12px] text-muted" aria-live="polite">{count} of {MONTH.today} days</span>
       </div>
       <div className="text-[15px] font-medium">{water.title}</div>
-      <div className="min-h-0 flex-1">{month("text-[11px]", "gap-1")}</div>
+      <div className="min-h-0 flex-1">{month("gap-1")}</div>
     </div>
   );
 }
