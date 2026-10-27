@@ -75,7 +75,7 @@ export function QuickAddDemo() {
       <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
         <Reveal>
           <p className="eyebrow">Smart add</p>
-          <h2 id="qa-title" className="section-title mt-3">Smart add</h2>
+          <h2 id="qa-title" className="section-title mt-3">Just type it.</h2>
           <p className="lead mt-5 max-w-md">Intelligently plan your day with smart add. Use plain words to describe all the details of your task</p>
         </Reveal>
 
