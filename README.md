@@ -24,7 +24,7 @@ node scripts/serve-out.mjs 4000   # serve out/ with gzip, like a host would
 The build sandbox could not reach their registries, so `components/kokonut` (bento grid, footer, button style) and `components/bklit` (habit grid, week bar, mini bars) are local components that follow their patterns, restyled to Orbit's tokens. To use the originals, add them with the shadcn CLI (`npx shadcn@latest add <registry url>`) and map the props; the call sites are small.
 
 ## Configuration
-Set before building: `NEXT_PUBLIC_TESTFLIGHT_URL` (the beta link; defaults to a placeholder), `NEXT_PUBLIC_WINDOWS_URL` (defaults to the verified 0.3.7 Windows installer; update the fallback when publishing a new release), `NEXT_PUBLIC_SITE_URL` (for canonical, sitemap and social images), `NEXT_PUBLIC_BASE_PATH` (GitHub Pages project sites only).
+Set before building: `NEXT_PUBLIC_TESTFLIGHT_URL` (the beta link; defaults to a placeholder), `NEXT_PUBLIC_WINDOWS_URL` (defaults to the verified 0.3.8 Windows installer; update the fallback when publishing a new release), `NEXT_PUBLIC_SITE_URL` (for canonical, sitemap and social images), `NEXT_PUBLIC_BASE_PATH` (GitHub Pages project sites only).
 
 ## Deploy
 **Vercel:** import the repo. Framework: Next.js. It detects the static export; add the env vars above. Done.

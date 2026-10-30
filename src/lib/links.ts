@@ -1,7 +1,7 @@
 /** External destinations. Override per deployment with NEXT_PUBLIC_* variables. */
 export const links = {
   testflight: process.env.NEXT_PUBLIC_TESTFLIGHT_URL ?? "https://testflight.apple.com/join/REPLACE_ME",
-  windows: process.env.NEXT_PUBLIC_WINDOWS_URL || "https://github.com/jaiten/Orbit/releases/download/v0.3.7/Orbit-Setup-0.3.7.exe",
+  windows: process.env.NEXT_PUBLIC_WINDOWS_URL || "https://github.com/jaiten/Orbit/releases/download/v0.3.8/Orbit-Setup-0.3.8.exe",
   windowsReleases: "https://github.com/jaiten/Orbit/releases/latest",
   github: "https://github.com/jaiten/Orbit",
   support: "/support/",
