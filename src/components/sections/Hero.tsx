@@ -67,7 +67,7 @@ export function Hero() {
           <Monitor size={18} /> Download for Windows
         </Button>
       </m.div>
-      <p className="mt-4 text-[14px] text-muted">Free. iPhone through TestFlight, Windows as a portable app.</p>
+      <p className="mt-4 text-[14px] text-muted">Free. iPhone through TestFlight, Windows with an installer and automatic updates.</p>
 
       <m.div
         className="mx-auto mt-12 max-w-[1080px]"
