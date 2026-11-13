@@ -10,7 +10,10 @@ export const metadata: Metadata = {
 
 export default function Connected() {
   return (
-    <main id="main" className="grid min-h-dvh place-items-center bg-canvas px-6 py-16">
+    <main
+      id="main"
+      className="grid min-h-dvh place-items-center bg-canvas px-6 py-16"
+    >
       <ConnectedStatus />
     </main>
   );

@@ -5,14 +5,17 @@ import { OrbitMark } from "@/components/brand/OrbitMark";
 
 /** What the app reports in the address: ?service=google|microsoft&status=ok|calendar|cancelled|error */
 type Status = "ok" | "calendar" | "cancelled" | "error";
-const names: Record<string, string> = { google: "Google Calendar", microsoft: "Outlook" };
+const names: Record<string, string> = {
+  google: "Google Calendar",
+  microsoft: "Outlook",
+};
 
 function copy(status: Status, name: string) {
   switch (status) {
     case "ok":
       return {
         title: `${name} is connected`,
-        body: "Your calendars are now in Orbit. Switch back to the app — you can close this tab.",
+        body: "Your calendars are now in Orbit.",
         hint: "Choose which calendars show in Orbit under Settings → Calendar.",
       };
     case "calendar":
@@ -37,12 +40,17 @@ function copy(status: Status, name: string) {
 }
 
 export function ConnectedStatus() {
-  const [state, setState] = useState<{ status: Status; name: string } | null>(null);
+  const [state, setState] = useState<{ status: Status; name: string } | null>(
+    null,
+  );
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const status = query.get("status");
     setState({
-      status: status === "ok" || status === "calendar" || status === "cancelled" ? status : "error",
+      status:
+        status === "ok" || status === "calendar" || status === "cancelled"
+          ? status
+          : "error",
       name: names[query.get("service") ?? ""] ?? "your calendar",
     });
   }, []);
@@ -62,14 +70,34 @@ export function ConnectedStatus() {
           style={{ background: ok ? "var(--sage)" : "var(--muted)" }}
           aria-hidden
         >
-          <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="white" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
-            {ok ? <path d="m5 12.5 4.5 4.5L19 7.5" /> : <path d="M12 7v6m0 4h.01" />}
+          <svg
+            viewBox="0 0 24 24"
+            className="size-4"
+            fill="none"
+            stroke="white"
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            {ok ? (
+              <path d="m5 12.5 4.5 4.5L19 7.5" />
+            ) : (
+              <path d="M12 7v6m0 4h.01" />
+            )}
           </svg>
         </span>
       </div>
       <h1 className="display text-[30px] leading-tight">{text.title}</h1>
       <p className="mt-3 text-[17px] text-ink">{text.body}</p>
       <p className="mt-4 text-[15px] leading-relaxed text-muted">{text.hint}</p>
+      {/* Orbit for Windows handles orbit:// links; the browser asks once before opening the app. */}
+      <a
+        href="orbit://open"
+        className="mt-7 inline-flex h-11 items-center justify-center rounded-full bg-btn px-6 text-[15px] font-medium text-on-btn transition hover:brightness-110"
+      >
+        Open Orbit
+      </a>
+      <p className="mt-3 text-[13px] text-muted">You can close this tab.</p>
     </section>
   );
 }
