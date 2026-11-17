@@ -23,8 +23,8 @@ const faq = [
     q: "Windows says “unknown publisher”. Is it safe?",
     a: (
       <>
-        <p>Orbit for Windows is a portable app that is not signed with a paid publisher certificate yet, so Windows SmartScreen may warn you the first time you open it.</p>
-        <p>If you downloaded it from the official <a href={links.windows}>Orbit releases page</a>, choose <b>More info</b>, then <b>Run anyway</b>. The source is public on <a href={links.github}>GitHub</a> if you want to check it first.</p>
+        <p>Orbit for Windows has an installer with automatic updates and a portable download. The app is currently distributed without a publisher certificate; it is not signed yet, so Windows SmartScreen may warn you the first time you open it.</p>
+        <p>If you downloaded it from the official <a href={links.windowsReleases}>Orbit releases page</a>, choose <b>More info</b>, then <b>Run anyway</b>. The source is public on <a href={links.github}>GitHub</a> if you want to check it first.</p>
       </>
     ),
   },

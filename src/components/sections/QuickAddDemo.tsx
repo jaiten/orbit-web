@@ -77,7 +77,7 @@ export function QuickAddDemo() {
       <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
         <Reveal>
           <p className="eyebrow">Smart add</p>
-          <h2 id="qa-title" className="section-title mt-3">Smart add</h2>
+          <h2 id="qa-title" className="section-title mt-3">Type it like you’d say it</h2>
           <p className="lead mt-5 max-w-md">Intelligently plan your day with smart add. Use plain words to describe all the details of your task</p>
           <p className="mt-5 max-w-md text-[15px] text-muted">
             Add your own rules too. With <span className="font-medium text-ink">mums = Thu, Fri</span> in Settings, <span className="font-medium text-ink">@mums</span> puts a task on the next of those days.

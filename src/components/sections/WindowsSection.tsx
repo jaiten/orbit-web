@@ -5,6 +5,9 @@ import { DesktopApp, type PageId } from "@/components/devices/DesktopApp";
 import { useDesktopApp } from "@/components/devices/use-desktop-app";
 import { WindowFrame } from "@/components/devices/WindowFrame";
 import { Keycap } from "@/components/ui/Keycap";
+import { Button } from "@/components/ui/Button";
+import { links } from "@/lib/links";
+import { Download } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { screenshots } from "@/lib/media";
 
@@ -188,6 +191,10 @@ export function WindowsSection() {
           <p className="eyebrow">Windows</p>
           <h2 id="windows-title" className="section-title mt-3">Keyboard first</h2>
           <p className="lead mt-5">Orbit for Windows is built for the keys under your hands. Add from anywhere, jump between pages and search without reaching for the mouse. The window below works, so click around</p>
+          <div className="mt-7 flex flex-col items-center gap-3">
+            <Button href={links.windows} size="lg"><Download size={18} /> Download for Windows</Button>
+            <a href={links.windowsReleases} className="text-sm text-muted underline underline-offset-4">Release notes and portable download</a>
+          </div>
         </Reveal>
 
         <div
