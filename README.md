@@ -16,7 +16,7 @@ node scripts/serve-out.mjs 4000   # serve out/ with gzip, like a host would
 ## Structure
 - `src/styles/tokens.css`: the one place for colours, radii and themes (light, dark, system + toggle).
 - `src/lib/motion.ts`: every spring, stagger and reveal preset. `src/lib/media.ts`: optional real screenshots. `src/lib/links.ts`: TestFlight / download URLs.
-- `src/lib/quick-add.ts`: TS port of Orbit's shared parser; `scripts/test-quick-add.ts` checks it against the repo's 34 cases.
+- `src/lib/quick-add.ts`: TS port of Orbit's shared parser; `scripts/test-quick-add.ts` checks it against the repo's shared cases (including @ place rules).
 - `src/components/sections/*`: one component per section. `devices/` holds the iPhone and Windows frames and live Today screens. `widgets/` the widget styles.
 - `kokonut/` and `bklit/`: see the note below.
 

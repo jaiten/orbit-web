@@ -9,7 +9,9 @@ import { spring } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 
 const PHRASES = ["gym tomorrow 6pm", "read every day", "call mum someday"];
-const SUGGESTIONS = [...PHRASES, "dentist friday 3:30pm"];
+const SUGGESTIONS = [...PHRASES, "dentist friday 3:30pm", "pack PE kit @mums"];
+/** A quick add rule, as set in the apps' Settings: @mums means the next Thursday or Friday. */
+const PLACES = [{ name: "mums", days: [4, 5] }];
 
 interface Added { id: number; title: string; chip: string[]; kind: "task" | "habit" }
 
@@ -29,11 +31,11 @@ export function QuickAddDemo() {
 
   useEffect(() => setNow(new Date()), []);
 
-  const result = useMemo(() => parse(value, null, now ?? new Date(2026, 9, 20, 9, 0)), [value, now]);
+  const result = useMemo(() => parse(value, null, now ?? new Date(2026, 9, 20, 9, 0), PLACES), [value, now]);
   const parts = now || value ? chipParts(result, now ?? undefined) : [];
 
   const add = (text: string) => {
-    const r = parse(text, null, now ?? new Date());
+    const r = parse(text, null, now ?? new Date(), PLACES);
     if (!r.title) return;
     setAdded((list) => [{ id: nextId.current++, title: r.title, chip: chipParts(r, now ?? undefined), kind: r.kind }, ...list].slice(0, 4));
     setValue("");
@@ -77,6 +79,9 @@ export function QuickAddDemo() {
           <p className="eyebrow">Smart add</p>
           <h2 id="qa-title" className="section-title mt-3">Smart add</h2>
           <p className="lead mt-5 max-w-md">Intelligently plan your day with smart add. Use plain words to describe all the details of your task</p>
+          <p className="mt-5 max-w-md text-[15px] text-muted">
+            Add your own rules too. With <span className="font-medium text-ink">mums = Thu, Fri</span> in Settings, <span className="font-medium text-ink">@mums</span> puts a task on the next of those days.
+          </p>
         </Reveal>
 
         <Reveal>

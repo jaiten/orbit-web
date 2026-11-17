@@ -234,7 +234,7 @@ export function WindowsSection() {
               ))}
             </div>
             <p className="mt-6 border-t border-line pt-5 text-[14px] text-muted">
-              Also <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Space</kbd> or <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Enter</kbd> to tick the focused item, <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Esc</kbd> to close a dialog, and a global smart add on <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Ctrl+Shift+Space</kbd> from any app
+              Also <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Space</kbd> or <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Enter</kbd> to tick the focused item, <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Esc</kbd> to close a dialog, <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Ctrl+Z</kbd> and <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Ctrl+Y</kbd> to undo and redo, <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Ctrl+Shift+Enter</kbd> to add long text as a task, and a global smart add on <kbd className="rounded bg-canvas px-1.5 py-0.5 font-mono text-[12px] ring-1 ring-line">Ctrl+Shift+Space</kbd> from any app
             </p>
           </div>
         </div>

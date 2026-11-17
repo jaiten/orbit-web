@@ -8,6 +8,7 @@ import { WidgetsSection } from "@/components/sections/WidgetsSection";
 import { WindowsSection } from "@/components/sections/WindowsSection";
 import { SyncSection } from "@/components/sections/SyncSection";
 import { SiriSection } from "@/components/sections/SiriSection";
+import { SmartSection } from "@/components/sections/SmartSection";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { Footer } from "@/components/kokonut/Footer";
 import { links, siteUrl } from "@/lib/links";
@@ -36,6 +37,9 @@ export default function Home() {
         </LazyIsland>
         <LazyIsland>
           <TodaySection />
+        </LazyIsland>
+        <LazyIsland>
+          <SmartSection />
         </LazyIsland>
         <LazyIsland>
           <HabitsSection />

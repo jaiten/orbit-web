@@ -37,7 +37,11 @@ function nextWeekday(from: Date, weekday: number, skipToday: boolean) {
   return addDays(from, offset);
 }
 
-export function parse(input: string, defaultDate: string | null = null, now = new Date()): QuickAddResult {
+/** An @ rule from the apps' Settings → Quick add rules: "@mums" lands on the next of `days` (0 = Sunday). */
+export interface Place { name: string; days: number[] }
+const escape = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+export function parse(input: string, defaultDate: string | null = null, now = new Date(), places: Place[] = []): QuickAddResult {
   let text = " " + input.trim() + " ";
   const take = (pattern: RegExp) => {
     const match = text.match(pattern);
@@ -66,7 +70,14 @@ export function parse(input: string, defaultDate: string | null = null, now = ne
 
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let date: Date | null = null;
-  if (!schedule) {
+  if (!schedule)
+    for (const place of places) {
+      if (date || !place.name || !place.days.length) continue;
+      if (take(new RegExp(`\\s@${escape(place.name)}(?=\\s)`, "i"))) {
+        for (let offset = 0; offset < 7 && !date; offset++) if (place.days.includes(addDays(today, offset).getDay())) date = addDays(today, offset);
+      }
+    }
+  if (!schedule && !date) {
     let match: RegExpMatchArray | null;
     if ((match = take(/\s(?:on\s+)?(today|tonight)(?=\s)/i))) date = today;
     else if ((match = take(/\s(?:on\s+)?(tomorrow|tmrw|tmr)(?=\s)/i))) date = addDays(today, 1);

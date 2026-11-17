@@ -4,8 +4,8 @@ import { parse } from "../src/lib/quick-add";
 
 const now = new Date(cases.now);
 let failed = 0;
-for (const c of cases.cases as { input: string; defaultDate?: string; expect: Record<string, unknown> }[]) {
-  const got = parse(c.input, c.defaultDate ?? null, now) as unknown as Record<string, unknown>;
+for (const c of cases.cases as { input: string; defaultDate?: string; places?: { name: string; days: number[] }[]; expect: Record<string, unknown> }[]) {
+  const got = parse(c.input, c.defaultDate ?? null, now, c.places ?? []) as unknown as Record<string, unknown>;
   const bad = Object.entries(c.expect).filter(([k, v]) => got[k] !== v);
   if (bad.length) {
     failed++;
