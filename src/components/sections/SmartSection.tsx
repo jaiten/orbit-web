@@ -88,15 +88,18 @@ function Learns({ active }: { active: boolean }) {
   );
 }
 
-/** Do on…: tomorrow and the next few days by name, worked out in the visitor's own week. */
+/**
+ * Do on…: tomorrow and the next few days by name, worked out in the visitor's own week.
+ * The day menu floats over the tile (absolute) so opening it never changes the tile's height.
+ */
 function DoOn({ active }: { active: boolean }) {
-  const [days, setDays] = useState<string[]>(["Tomorrow", "Thursday", "Friday", "Saturday", "Sunday"]);
+  const [days, setDays] = useState<string[]>(["Tomorrow", "Thursday", "Friday", "Saturday"]);
   useEffect(() => {
     const today = new Date();
-    setDays([1, 2, 3, 4, 5].map((n) => (n === 1 ? "Tomorrow" : new Date(today.getFullYear(), today.getMonth(), today.getDate() + n).toLocaleDateString("en-US", { weekday: "long" }))));
+    setDays([1, 2, 3, 4].map((n) => (n === 1 ? "Tomorrow" : new Date(today.getFullYear(), today.getMonth(), today.getDate() + n).toLocaleDateString("en-US", { weekday: "long" }))));
   }, []);
   return (
-    <div className="flex h-full items-start gap-2" aria-hidden>
+    <div className="relative flex h-full items-start gap-2" aria-hidden>
       <div className="w-[46%] rounded-[12px] bg-canvas p-1 text-[13px] ring-1 ring-line">
         {["Edit…", "Start a timer", "Do on…", "Make it a Note"].map((item) => (
           <div key={item} className={cn("flex items-center justify-between rounded-[8px] px-2.5 py-1.5", item === "Do on…" && active && "bg-[#0a84ff] text-white")}>
@@ -107,7 +110,7 @@ function DoOn({ active }: { active: boolean }) {
       </div>
       <AnimatePresence>
         {active && (
-          <m.div initial={{ opacity: 0, x: -8, scale: 0.97 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -6 }} transition={spring.ui} className="mt-[52px] w-[46%] rounded-[12px] bg-canvas p-1 text-[13px] shadow-card ring-1 ring-line">
+          <m.div initial={{ opacity: 0, x: -8, scale: 0.97 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -6 }} transition={spring.ui} className="absolute left-[calc(46%+0.5rem)] top-0 w-[46%] rounded-[12px] bg-canvas p-1 text-[13px] shadow-card ring-1 ring-line">
             {days.map((day, i) => (
               <m.div key={day + i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.04 * i }} className="rounded-[8px] px-2.5 py-1.5">
                 {day}
